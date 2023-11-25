@@ -32,7 +32,15 @@
         $OutputFormat = 'None'
     )
 
-    begin {}
+    begin {
+
+        # Setup return containers
+        if($OutputFormat -eq 'PSObject'){ $PSObjContents = @() }
+        if($OutputFormat -eq 'Table'){ $TableContents = @() }
+        if($OutputFormat -eq 'JSON'){ $JSONContents = @() }
+        if($OutputFormat -eq 'XML'){ $XMLContents = @() }
+        if($OutputFormat -eq 'NONE'){ $BareContents = @()}
+    }
 
     process {
         # Resolve path(s)
@@ -43,42 +51,67 @@
         }
 
         foreach ($item in $resolvedPaths) {
-            # # Obtain Bit Depth
-            $image = [System.Drawing.Bitmap]::FromFile($item)
-            $bitDepth = $image.PixelFormat.ToString()
-            $image.Dispose()
 
-            # Assign Bit Depth Variables
-            $fullBitDepth = $bitDepth
-            if ($bitDepth -match '(\d+)') {
-                $shortBitDepth = $Matches[1]
-            }
+            try {
 
-            if ($OutputFormat -eq 'PSObject') {
-                if ($ReturnFullFormat) {
-                    [PSCustomObject]@{
-                        Image    = $item
-                        BitDepth = $fullBitDepth
-                    }
-                } else {
-                    [PSCustomObject]@{
-                        Image    = $item
-                        BitDepth = $shortBitDepth
-                    }
+                $image = [System.Drawing.Bitmap]::FromFile($item)
+                $bitDepth = $image.PixelFormat.ToString()
+                $image.Dispose()
+
+                $fullBitDepth = $bitDepth
+                if ($bitDepth -match '(\d+)') {
+                    $shortBitDepth = $Matches[1]
+                }
+
+                $FullObject = [pscustomobject]@{
+                    Image     = $item
+                    BitDepth  = $fullBitDepth
+                }
+
+                $MinimalObject = [pscustomobject]@{
+                    Image      = $item
+                    BitDepth   = $shortBitDepth
+                }
+
+                if($ReturnFullFormat.IsPresent){
+                    if($OutputFormat -eq 'PSObject')  { $PSObjContents += $FullObject }
+                    elseif($OutputFormat -eq 'JSON')  { $JSONContents  += $FullObject }
+                    elseif($OutputFormat -eq 'Table') { $TableContents += $FullObject }
+                    elseif($OutputFormat -eq 'XML')   { $XMLContents   += $FullObject }
+                    elseif($OutputFormat -eq 'None')  { $BareContents  += $fullBitDepth }
+                }
+                elseif(!$ReturnFullFormat){
+                    if($OutputFormat -eq 'PSObject')  { $PSObjContents += $MinimalObject }
+                    elseif($OutputFormat -eq 'JSON')  { $JSONContents  += $MinimalObject }
+                    elseif($OutputFormat -eq 'Table') { $TableContents += $MinimalObject }
+                    elseif($OutputFormat -eq 'XML')   { $XMLContents   += $MinimalObject }
+                    elseif($OutputFormat -eq 'None')  { $BareContents  += $shortBitDepth }
                 }
             }
-
-            if ($OutputFormat -eq 'None') {
-                if ($ReturnFullFormat) {
-                    $fullBitDepth
-                } else {
-                    $shortBitDepth
-                }
+            catch {
+                Write-Error "A critical error occured: $_"
+                $Error[0] | Format-List * -Force
             }
-
         }
     }
 
-    end {}
+    end {
+
+        if($OutputFormat -eq 'PSObject'){
+            $PSObjContents
+        }
+        elseif($OutputFormat -eq 'Table'){
+            Format-SpectreTable -Data $TableContents -Border Square -Color Grey35
+        }
+        elseif($OutputFormat -eq 'JSON') {
+            $JSONContents | ConvertTo-Json
+        }
+        elseif($OutputFormat -eq 'XML') {
+            ConvertTo-XML -As String -InputObject $XMLContents -Depth 5
+        }
+        elseif($OutputFormat -eq 'NONE') {
+            $BareContents
+        }
+    }
 }
 

@@ -33,13 +33,18 @@
         $Precision = 2,
 
         [Parameter(Mandatory=$false)]
-        [Switch]
-        $HideLabels,
-
-        [Parameter(Mandatory=$false)]
         [ValidateSet('None','PSObject','JSON','XML','Table', IgnoreCase = $true)]
         [String]
-        $OutputFormat = 'None'
+        $OutputFormat = 'None',
+
+        [Parameter(Mandatory=$false)]
+        [ValidateSet('Combined','Separated', IgnoreCase = $true)]
+        [String]
+        $FormatUnits = 'Combined',
+
+        [Parameter(Mandatory=$false)]
+        [Switch]
+        $HideDefaultUnitLabels
 
     )
 
@@ -51,8 +56,8 @@
             return 2
         }
 
-        if(($OutputFormat -ne 'None') -and ($HideLabels)){
-            Write-Error "HideLabels is only usable if the output format is NONE."
+        if(($OutputFormat -ne 'None') -and ($HideDefaultUnitLabels)){
+            Write-Error "HideDefaultUnitLabels is only usable if the output format is NONE."
             return 2
         }
 
@@ -61,7 +66,7 @@
         if($OutputFormat -eq 'Table'){ $TableContents = @() }
         if($OutputFormat -eq 'JSON'){ $JSONContents = @() }
         if($OutputFormat -eq 'XML'){ $XMLContents = @() }
-        #if($OutputFormat -eq 'NONE'){ $BareContents = @() }
+        if($OutputFormat -eq 'NONE'){ $DefaultUnits = @() }
     }
 
     process {
@@ -107,29 +112,39 @@
                     }
                 }
 
-                $FullObject = [pscustomobject]@{
+                $SeparatedValues = [pscustomobject]@{
                     File  = $item
                     Size  = $fileSize
                     Unit  = $unitLabel
                 }
 
-                $MinimalObject = [pscustomobject]@{
+                $CombinedValues = [pscustomobject]@{
                     File  = $item
                     Size  = "$fileSize $unitLabel"
                 }
 
-                if($OutputFormat -eq 'PSObject')  { $PSObjContents += $FullObject }
-                elseif($OutputFormat -eq 'JSON')  { $JSONContents += $MinimalObject }
-                elseif($OutputFormat -eq 'Table') { $TableContents += $FullObject }
-                elseif($OutputFormat -eq 'XML')   { $XMLContents += $MinimalObject }
-                
-                elseif($OutputFormat -eq 'None') {
-                    if ($HideLabels.IsPresent) {
-                        $BareContents = $fileSize
-                    } else {
-                        $BareContents = "$fileSize $unitLabel" 
+                if($FormatUnits -eq 'Combined'){
+                    if($OutputFormat -eq 'PSObject')  { $PSObjContents += $CombinedValues }
+                    elseif($OutputFormat -eq 'JSON')  { $JSONContents  += $CombinedValues }
+                    elseif($OutputFormat -eq 'Table') { $TableContents += $CombinedValues }
+                    elseif($OutputFormat -eq 'XML')   { $XMLContents   += $CombinedValues }
+                }
+                elseif($FormatUnits -eq 'Separated'){
+                    if($OutputFormat -eq 'PSObject')  { $PSObjContents += $SeparatedValues }
+                    elseif($OutputFormat -eq 'JSON')  { $JSONContents  += $SeparatedValues }
+                    elseif($OutputFormat -eq 'Table') { $TableContents += $SeparatedValues }
+                    elseif($OutputFormat -eq 'XML')   { $XMLContents   += $SeparatedValues }
+                }
+
+                if($OutputFormat -eq 'None')  { 
+                    if($HideDefaultUnitLabels){
+                        $DefaultUnits  += $fileSize 
+                    }
+                    else {
+                        $DefaultUnits  += "$fileSize $unitLabel"
                     }
                 }
+
             }
             catch {
                 Write-Error "A critical error occured: $_"
@@ -139,6 +154,7 @@
     }
 
     end {
+
         if($OutputFormat -eq 'PSObject'){
             $PSObjContents
         }
@@ -146,15 +162,13 @@
             Format-SpectreTable -Data $TableContents -Border Square -Color Grey35
         }
         elseif($OutputFormat -eq 'JSON') {
-            $FileList = $JSONContents | ConvertTo-Json
-            $FileList
+            $JSONContents | ConvertTo-Json
         }
         elseif($OutputFormat -eq 'XML') {
-            $FileList = ConvertTo-XML -As String -InputObject $XMLContents -Depth 5
-            $FileList
+            ConvertTo-XML -As String -InputObject $XMLContents -Depth 5
         }
         elseif($OutputFormat -eq 'NONE') {
-            $BareContents
+            $DefaultUnits
         }
     }
 }

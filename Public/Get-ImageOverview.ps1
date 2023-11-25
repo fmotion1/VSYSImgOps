@@ -24,14 +24,15 @@
         [string[]]$LiteralPath,
 
         [Parameter(Mandatory=$false)]
-        [ValidateSet('PSObject','JSON','XML', IgnoreCase = $true)]
+        [ValidateSet('PSObject','JSON','XML','TABLE', IgnoreCase = $true)]
         [String]
-        $OutputType
+        $OutputFormat = 'PSObject'
 
     )
 
     begin {
         # Init
+        $PSObjContents = @()
     }
 
     process {
@@ -48,7 +49,7 @@
 
             $W = Get-ImageDimensions -Path $item -WidthOnly
             $H = Get-ImageDimensions -Path $item -HeightOnly
-            $B = Get-ImageBitDepth -Path $item
+            $B = Get-ImageBitDepth -Path $item -OutputFormat None
             $A = Get-ImageAspectRatio -Path $item
             $S = Get-ImageFileSize -Path $item -OutputUnits Auto
 
@@ -61,18 +62,23 @@
                 FileSize    = $S
             }
 
-            if($OutputType -eq 'PSObject'){
-                $ReturnObject
-            }
-            elseif($OutputType -eq 'JSON'){
-                $ReturnObject | ConvertTo-Json
-            }
-            elseif($OutputType -eq 'XML'){
-
-            }
+            $PSObjContents += $ReturnObject
 
         }
     }
 
-    end {}
+    end {
+        if($OutputFormat -eq 'PSObject'){
+            $PSObjContents
+        }
+        elseif($OutputFormat -eq 'JSON'){
+            $PSObjContents | ConvertTo-Json
+        }
+        elseif($OutputFormat -eq 'XML'){
+            ConvertTo-XML -As String -InputObject $PSObjContents -Depth 5
+        }
+        elseif($OutputFormat -eq 'TABLE'){
+            Format-SpectreTable -Data $PSObjContents -Border Square -Color Grey35
+        }
+    }
 }

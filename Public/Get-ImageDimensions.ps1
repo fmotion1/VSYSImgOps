@@ -33,7 +33,11 @@ function Get-ImageDimensions {
 
         [Parameter(Mandatory=$false)]
         [Switch]
-        $IncludeImagePath
+        $IncludeImageColumn,
+
+        [Parameter(Mandatory=$false)]
+        [Switch]
+        $PrettyPrint
 
     )
 
@@ -59,19 +63,26 @@ function Get-ImageDimensions {
             $Height = $Image.Height
             $Image.Dispose()
 
-            if($WidthOnly){ return $Width }
-            if($HeightOnly){ return $Height }
+            if(!$PrettyPrint){
+                if($WidthOnly){ return $Width }
+                if($HeightOnly){ return $Height }
+            }
             
             $ReturnObject = [PSCustomObject]@{
                 Width  = $Width
                 Height = $Height
             }
 
-            if($IncludeImagePath){
+            if($IncludeImageColumn){
                 $ReturnObject | Add-Member -Name 'Image' -Type NoteProperty -Value $item
             }
 
-            $ReturnObject
+            if(!$PrettyPrint){
+                $ReturnObject
+            }else{
+                '{0} ({1}x{2})' -f $item, $Width, $Height
+            }
+            
         }
     }
 }

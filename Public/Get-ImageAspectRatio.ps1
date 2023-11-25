@@ -68,7 +68,7 @@
                 $aspectRatio = $aspectRatioW + ":" + $aspectRatioH
                 
                 if($IncludeImage){
-                    [PSCustomObject]@{
+                    [PSCustomObject][ordered]@{
                         Image = $item
                         AspectRatio = $aspectRatio
                     }
@@ -79,7 +79,8 @@
     
         }
         catch {
-            Write-Error "Error: $_"
+            Write-Error "An error occured: $_"
+            $Error[0] | Format-List * -Force
         }
     }
 }
