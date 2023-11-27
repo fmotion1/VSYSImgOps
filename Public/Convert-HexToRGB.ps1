@@ -1,10 +1,21 @@
-﻿function Convert-HexToRGB {
+﻿# FUNCTION IS DONE
+function Convert-HexToRGB {
     [CmdletBinding()]
-    [OutputType([VSYSColorStructs.RGBColor])]
+    [OutputType([VSYSColorStructs.HSVColor])]
     param (
         [Parameter(
             Mandatory,
-            ParameterSetName = 'Hex',
+            ParameterSetName = 'PSCustom',
+            Position = 0,
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName
+        )]
+        [ValidateNotNullOrEmpty()]
+        [pscustomobject[]]$Object,
+
+        [Parameter(
+            Mandatory,
+            ParameterSetName = 'String',
             Position = 0,
             ValueFromPipeline,
             ValueFromPipelineByPropertyName
@@ -13,52 +24,48 @@
         [string[]]$Hex
     )
 
-    begin {
-        $ValidHex = @()
-    }
-
     process {
-   
-        foreach ($C in $Hex) {
 
-            $isWellFormed = $C -match '^#([A-Fa-f0-9]{6})$'
-            if(!$isWellFormed){
-                Write-Error "Your hex input is malformed. Check your input value."
-                exit 2
-            }
+        $InputHex = @()
+        $ValidHexArray = @()
 
-            # Remove hash if present
-            if ($C.StartsWith("#")) {
-                $C = $C.Substring(1)
-            }
-        
-            # Ensure hex color is 6 characters long
-            if ($C.Length -ne 6) {
-                Write-Error "Hex color must be 6 characters long excluding the # symbol."
-                exit 2
-            }
 
-            $ValidHex += $C
-            
+        if($PSCmdlet.ParameterSetName -eq 'PSCustom'){
+            foreach ($HexObject in $Object) {
+                $InputHex += $HexObject.Hex
+            }
+        }
+        if($PSCmdlet.ParameterSetName -eq 'String'){
+            foreach ($HexString in $Hex) {
+                $InputHex += $HexString
+            }
         }
 
-        foreach ($HexColor in $ValidHex) {
+        # Validation
+        foreach ($HexTest in $InputHex) {
+            $IsValidHex = Confirm-WellFormedHex -Hex $HexTest
+            if($IsValidHex){
+                $ValidHexArray += $HexTest
+            }
+        }
 
-            #Write-Host "`$HexColor:" $HexColor -ForegroundColor Green
+        foreach ($HexValue in $ValidHexArray) {
 
-            # Extract the red, green, and blue components
-            $r = [convert]::ToInt32($HexColor.Substring(0, 2), 16)
-            $g = [convert]::ToInt32($HexColor.Substring(2, 2), 16)
-            $b = [convert]::ToInt32($HexColor.Substring(4, 2), 16)
+            $HexValTest = $HexValue.TrimStart('#')
 
+            # Convert Hex to RGB
+            $R = [convert]::ToInt32($HexValTest.Substring(0, 2), 16)
+            $G = [convert]::ToInt32($HexValTest.Substring(2, 2), 16)
+            $B = [convert]::ToInt32($HexValTest.Substring(4, 2), 16)
+            
             $RGBStruct = [VSYSColorStructs.RGBColor]::new()
-            $RGBStruct.Red = $r
-            $RGBStruct.Green = $g
-            $RGBStruct.Blue = $b
+            $RGBStruct.Red = $R
+            $RGBStruct.Green = $G
+            $RGBStruct.Blue = $B
+            $RGBStruct
 
-            return $RGBStruct
         }
     }
 }
 
-# '#FFFFFF', '#445867' | Convert-HexToRGB
+# Convert-HexToRGB -Hex '#FFFFFF', '#445867'

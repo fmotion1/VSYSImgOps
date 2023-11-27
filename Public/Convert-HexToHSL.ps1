@@ -11,7 +11,7 @@ function Convert-HexToHSL {
             ValueFromPipelineByPropertyName
         )]
         [ValidateNotNullOrEmpty()]
-        [pscustomobject[]]$HexObjects,
+        [pscustomobject[]]$Object,
 
         [Parameter(
             Mandatory,
@@ -21,42 +21,43 @@ function Convert-HexToHSL {
             ValueFromPipelineByPropertyName
         )]
         [ValidateNotNullOrEmpty()]
-        [string[]]$HexStrings
+        [string[]]$Hex
 
     )
 
     process {
 
         $HexArray = @()
-        $ActualHex = @()
+        $InputHex = @()
 
         if($PSCmdlet.ParameterSetName -eq 'PSCustom'){
-            foreach ($HexObject in $HexObjects) {
-                $ActualHex += $HexObject.Hex
+            foreach ($HexObject in $Object) {
+                $InputHex += $HexObject.Hex
             }
         }
         if($PSCmdlet.ParameterSetName -eq 'String'){
-            foreach ($HexString in $HexStrings) {
-                $ActualHex += $HexString
+            foreach ($HexString in $Hex) {
+                $InputHex += $HexString
             }
         }
 
         # Validation
-        foreach ($Hex in $ActualHex) {
-            $ValidHex = Confirm-WellFormedHex -Hex $Hex
+        foreach ($HexTest in $InputHex) {
+            $ValidHex = Confirm-WellFormedHex -Hex $HexTest
             if($ValidHex){
-                $HexArray += $Hex
+                $HexArray += $HexTest
             }
         }
 
-        foreach ($Hex in $HexArray) {
+        foreach ($HexVal in $HexArray) {
 
-            $RGBVals = Convert-HexToRGB "$Hex"
-            $r = $RGBVals.Red
-            $g = $RGBVals.Green
-            $b = $RGBVals.Blue
+            $RGBVals = Convert-HexToRGB -Hex $HexVal
 
-            $HSLObject = Convert-RGBToHSL -Red $r -Green $g -Blue $b
+            $R = $RGBVals.Red
+            $G = $RGBVals.Green
+            $B = $RGBVals.Blue
+
+            $HSLObject = Convert-RGBToHSL -R $R -G $G -B $B
 
             $OutHue = $HSLObject.Hue
             $OutSat = $HSLObject.Saturation
@@ -71,3 +72,5 @@ function Convert-HexToHSL {
         }
     }
 }
+
+Convert-HexToHSL -Hex "#55FF33", "#FFFFFF"

@@ -1,113 +1,106 @@
-﻿function Convert-RGBToHSL {
+﻿# FUNCTION IS DONE
+function Convert-RGBToHSL {
     [CmdletBinding()]
     [OutputType([VSYSColorStructs.HSLColor])]
     param (
-
         [Parameter(
             Mandatory,
             Position=0,
+            ParameterSetName="PSCustom",
             ValueFromPipeline,
-            ParameterSetName="ObjectInput")]
-        [pscustomobject[]]$RGBObjects,
+            ValueFromPipelineByPropertyName
+        )]
+        [ValidateNotNullOrEmpty()]
+        [pscustomobject[]]$Object,
 
-        [Parameter(Mandatory,ParameterSetName='SeparateInput')]
-        [int]$Red,   # Red value (0-255)
+        [Parameter(Mandatory, ParameterSetName = 'String')]
+        [ValidateNotNullOrEmpty()]
+        [string]$R,
 
-        [Parameter(Mandatory,ParameterSetName='SeparateInput')]
-        [int]$Green, # Green value (0-255)
+        [Parameter(Mandatory, ParameterSetName = 'String')]
+        [ValidateNotNullOrEmpty()]
+        [string]$G,
 
-        [Parameter(Mandatory,ParameterSetName='SeparateInput')]
-        [int]$Blue   # Blue value (0-255)
+        [Parameter(Mandatory, ParameterSetName = 'String')]
+        [ValidateNotNullOrEmpty()]
+        [string]$B
     )
 
     process {
 
-        if($PSCmdlet.ParameterSetName -eq 'ObjectInput'){
+        $RGBToHSL = {
+            param (
+                [String]$R,
+                [String]$G,
+                [String]$B
+            )
 
-            foreach ($Obj in $RGBObjects) {
+            # Normalize RGB values to the range 0-1
+            $red   = $R / 255.0
+            $green = $G / 255.0
+            $blue  = $B / 255.0
 
-                $Red   = $Obj.R
-                $Green = $Obj.G
-                $Blue  = $Obj.B
+            # Calculate min and max RGB values
+            $max = [Math]::Max($red, [Math]::Max($green, $blue))
+            $min = [Math]::Min($red, [Math]::Min($green, $blue))
+            $delta = $max - $min
 
+            # Luminance
+            $l = ($max + $min) / 2
+
+            # Saturation
+            if ($delta -eq 0) {
+                $s = 0
+            } else {
+                $s = $delta / (1 - [Math]::Abs(2 * $l - 1))
+            }
+
+            # Hue
+            $h = 0
+            if ($delta -ne 0) {
+                switch ($max) {
+                    $red   { $h = 60 * (($green - $blue) / $delta % 6) }
+                    $green { $h = 60 * (($blue - $red) / $delta + 2) }
+                    $blue  { $h = 60 * (($red - $green) / $delta + 4) }
+                }
+
+                # Ensure Hue is positive
+                if ($h -lt 0) {
+                    $h += 360
+                }
+            }
+
+            # Convert to percentages
+            $s *= 100
+            $l *= 100
+
+            $hRounded = [Math]::Round($h, 2)
+            $sRounded = [Math]::Round($s, 2)
+            $lRounded = [Math]::Round($l, 2)
+
+            return @($hRounded, $sRounded, $lRounded)
+
+        }
+
+        if($PSCmdlet.ParameterSetName -eq 'PSCustom'){
+            foreach ($RGBObject in $Object) {
+                $RGBObject.R = $Object.R
+                $RGBObject.G = $Object.G
+                $RGBObject.B = $Object.B
+                $ObjectsCollection = & $RGBToHSL -R $RGBObject.R -G $RGBObject.G -B $RGBObject.B
             }
         }
 
-        if($PSCmdlet.ParameterSetName -eq 'SeparateInput'){
-            $ROB = (($Red -lt 0) -or ($Red -gt 255))
-            $GOB = (($Green -lt 0) -or ($Green -gt 255))
-            $BOB = (($Blue -lt 0) -or ($Blue -gt 255))
-
-            if($ROB -or $GOB -or $BOB){
-                Write-Error "One of your input color values is out of bounds. Color values must be between 0 and 255"
-                exit 2
-            }
+        if($PSCmdlet.ParameterSetName -eq 'String'){
+            $ObjectsCollection = & $RGBToHSL -R $R -G $G -B $B
         }
-
-        # Normalize RGB values to the range 0-1
-        $r = $Red / 255.0
-        $g = $Green / 255.0
-        $b = $Blue / 255.0
-
-        # Calculate min and max RGB values
-        $max = [Math]::Max($r, [Math]::Max($g, $b))
-        $min = [Math]::Min($r, [Math]::Min($g, $b))
-        $delta = $max - $min
-
-        # Luminance
-        $l = ($max + $min) / 2
-
-        # Saturation
-        if ($delta -eq 0) {
-            $s = 0
-        } else {
-            $s = $delta / (1 - [Math]::Abs(2 * $l - 1))
-        }
-
-        # Hue
-        $h = 0
-        if ($delta -ne 0) {
-            switch ($max) {
-                $r { $h = 60 * (($g - $b) / $delta % 6) }
-                $g { $h = 60 * (($b - $r) / $delta + 2) }
-                $b { $h = 60 * (($r - $g) / $delta + 4) }
-            }
-
-            # Ensure Hue is positive
-            if ($h -lt 0) {
-                $h += 360
-            }
-        }
-
-        # Convert to percentages
-        $s *= 100
-        $l *= 100
-
 
         $HSLStruct = [VSYSColorStructs.HSLColor]::new()
-        $HOutput = [Math]::Round($h, 2)
-        $SOutput = [Math]::Round($s, 2)
-        $LOutput = [Math]::Round($l, 2)
-
-        $HSLStruct.Hue = $HOutput
-        $HSLStruct.Saturation = $SOutput
-        $HSLStruct.Lightness = $LOutput
-        return $HSLStruct
-
+        $HSLStruct.Hue = $ObjectsCollection[0]
+        $HSLStruct.Saturation = $ObjectsCollection[1]
+        $HSLStruct.Lightness = $ObjectsCollection[2]
+        $HSLStruct
     }
 }
 
-
-# $Obj1 = [PSCustomObject]@{
-#     R = 110
-#     G = 233
-#     B = 50
-# }
-
-# $Obj2 = [PSCustomObject]@{
-#     R = 50
-#     G = 25
-#     B = 70
-# }
-
-# $Results = $Obj1, $Obj2 | Convert-RGBToHSL
+#Convert-RGBToHSL -R 200 -G 200 -B 200

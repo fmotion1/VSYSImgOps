@@ -19,6 +19,8 @@
 
         # Ensure hex color is 7 characters long
         if ($Hex.Length -ne 7) {
+            Write-Host "`$Hex:" $Hex -ForegroundColor Green
+            Write-Host "`$Hex.Length:" $Hex.Length -ForegroundColor Green
             Write-Error "Hex color must be 7 characters long including the # symbol."
             return $false
         }

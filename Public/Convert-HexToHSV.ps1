@@ -1,71 +1,77 @@
-﻿function Convert-HexToHSV {
+﻿# FUNCTION IS DONE
+function Convert-HexToHSV {
     [CmdletBinding()]
     [OutputType([VSYSColorStructs.HSVColor])]
     param (
         [Parameter(
             Mandatory,
-            ParameterSetName = 'Hex',
+            ParameterSetName = 'PSCustom',
+            Position = 0,
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName
+        )]
+        [ValidateNotNullOrEmpty()]
+        [pscustomobject[]]$Object,
+
+        [Parameter(
+            Mandatory,
+            ParameterSetName = 'String',
             Position = 0,
             ValueFromPipeline,
             ValueFromPipelineByPropertyName
         )]
         [ValidateNotNullOrEmpty()]
         [string[]]$Hex
+
     )
-
-    begin {
-
-        $ValidHex = @()
-
-    }
 
     process {
 
-        foreach ($C in $Hex) {
+        $InputHex = @()
+        $ValidHexArray = @()
 
-            $isWellFormed = $C -match '^#([A-Fa-f0-9]{6})$'
-            if(!$isWellFormed){
-                Write-Error "Your hex input is malformed. Check your input value."
-                exit 2
+        if($PSCmdlet.ParameterSetName -eq 'PSCustom'){
+            foreach ($HexObject in $Object) {
+                $InputHex += $HexObject.Hex
             }
-
-            # Remove hash if present
-            if ($C.StartsWith("#")) {
-                $C = $C.Substring(1)
+        }
+        if($PSCmdlet.ParameterSetName -eq 'String'){
+            foreach ($HexString in $Hex) {
+                $InputHex += $HexString
             }
-        
-            # Ensure hex color is 6 characters long
-            if ($C.Length -ne 6) {
-                Write-Error "Hex color must be 6 characters long excluding the # symbol."
-                exit 2
-            }
-
-            $ValidHex += $C
-            
         }
 
-        foreach ($HexColor in $ValidHex) {
+        # Validation
+        foreach ($HexTest in $InputHex) {
+            $IsValidHex = Confirm-WellFormedHex -Hex $HexTest
+            if($IsValidHex){
+                $ValidHexArray += $HexTest
+            }
+        }
+
+        foreach ($HexValue in $ValidHexArray) {
+
+            $HexValTest = $HexValue.TrimStart('#')
+
             # Convert Hex to RGB
-            $r = [convert]::ToInt32($HexColor.Substring(0,2), 16)
-            $g = [convert]::ToInt32($HexColor.Substring(2,2), 16)
-            $b = [convert]::ToInt32($HexColor.Substring(4,2), 16)
+            $R = [convert]::ToInt32($HexValTest.Substring(0,2), 16)
+            $G = [convert]::ToInt32($HexValTest.Substring(2,2), 16)
+            $B = [convert]::ToInt32($HexValTest.Substring(4,2), 16)
 
             # Convert RGB to HSV
-            $hsv = Convert-RGBToHSV ($r,$g,$b)
+            $HSV = Convert-RGBToHSV -R $R -G $G -B $B
 
-            $HVal = [Math]::Round($hsv.H)
-            $SVal = [Math]::Round($hsv.S)
-            $VVal = [Math]::Round($hsv.V)
+            $HVal = [Math]::Round($HSV.Hue)
+            $SVal = [Math]::Round($HSV.Saturation)
+            $VVal = [Math]::Round($HSV.Value)
 
             $HSVStruct = [VSYSColorStructs.HSVColor]::new()
             $HSVStruct.Hue = $HVal
             $HSVStruct.Saturation = $SVal
             $HSVStruct.Value = $VVal
-
-            return $HSVStruct
+            $HSVStruct
         }
     }
 }
 
-
-#Convert-HexToHSV -Hex "#55FF33"
+# Convert-HexToHSV -Hex '#FFFFFF', '#445867'
