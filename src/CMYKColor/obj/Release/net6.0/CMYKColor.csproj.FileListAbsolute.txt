@@ -1,0 +1,13 @@
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\CMYKColor\bin\Release\net6.0\CMYKColor.deps.json
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\CMYKColor\bin\Release\net6.0\CMYKColor.dll
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\CMYKColor\bin\Release\net6.0\CMYKColor.pdb
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\CMYKColor\obj\Release\net6.0\CMYKColor.csproj.AssemblyReference.cache
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\CMYKColor\obj\Release\net6.0\CMYKColor.GeneratedMSBuildEditorConfig.editorconfig
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\CMYKColor\obj\Release\net6.0\CMYKColor.AssemblyInfoInputs.cache
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\CMYKColor\obj\Release\net6.0\CMYKColor.AssemblyInfo.cs
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\CMYKColor\obj\Release\net6.0\CMYKColor.csproj.CoreCompileInputs.cache
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\CMYKColor\obj\Release\net6.0\CMYKColor.sourcelink.json
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\CMYKColor\obj\Release\net6.0\CMYKColor.dll
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\CMYKColor\obj\Release\net6.0\refint\CMYKColor.dll
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\CMYKColor\obj\Release\net6.0\CMYKColor.pdb
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\CMYKColor\obj\Release\net6.0\ref\CMYKColor.dll

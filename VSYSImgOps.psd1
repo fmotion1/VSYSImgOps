@@ -28,14 +28,26 @@
                          'System.Windows.Forms', 
                          'PresentationCore', 
                          'PresentationFramework', 
-                         'System.Web'
+                         'System.Web',
+                         "$PSScriptRoot\Lib\CMYKColor.dll",
+                         "$PSScriptRoot\Lib\HSLColor.dll",
+                         "$PSScriptRoot\Lib\HSVColor.dll",
+                         "$PSScriptRoot\Lib\RGBColor.dll"
 
     FunctionsToExport =  'Get-ImageDominantColors',
                          'Get-ImageDimensions',
                          'Get-ImageBitDepth',
                          'Get-ImageAspectRatio',
                          'Get-ImageFileSize',
-                         'Get-ImageOverview'
+                         'Get-ImageOverview',
+                         'Convert-HexToRGB',
+                         'Convert-HexToHSL',
+                         'Convert-HexToHSV',
+                         'Convert-RGBToHSL',
+                         'Convert-RGBToHSV',
+                         'Select-MathMax3Arguments',
+                         'Select-MathMin3Arguments',
+                         'Confirm-WellFormedHex'
                         
 
     PrivateData = @{

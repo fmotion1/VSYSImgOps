@@ -1,0 +1,13 @@
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\HSVColor\bin\Release\net6.0\HSVColor.deps.json
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\HSVColor\bin\Release\net6.0\HSVColor.dll
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\HSVColor\bin\Release\net6.0\HSVColor.pdb
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\HSVColor\obj\Release\net6.0\HSVColor.csproj.AssemblyReference.cache
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\HSVColor\obj\Release\net6.0\HSVColor.GeneratedMSBuildEditorConfig.editorconfig
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\HSVColor\obj\Release\net6.0\HSVColor.AssemblyInfoInputs.cache
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\HSVColor\obj\Release\net6.0\HSVColor.AssemblyInfo.cs
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\HSVColor\obj\Release\net6.0\HSVColor.csproj.CoreCompileInputs.cache
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\HSVColor\obj\Release\net6.0\HSVColor.sourcelink.json
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\HSVColor\obj\Release\net6.0\HSVColor.dll
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\HSVColor\obj\Release\net6.0\refint\HSVColor.dll
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\HSVColor\obj\Release\net6.0\HSVColor.pdb
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\HSVColor\obj\Release\net6.0\ref\HSVColor.dll

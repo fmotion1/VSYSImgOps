@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "4DYgEhg+EUx5OKfiaedDtf0yjdYXqjTvEhHNo14TEovEor0kGZLl4mr6BZCRZQYqYZ312uVrAD+anifHsAkUug==",
+  "success": true,
+  "projectFilePath": "D:\\Dev\\Powershell\\VSYSModules\\VSYSImgOps\\src\\HSLColor\\HSLColor.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\futur\\.nuget\\packages\\powershellstandard.library\\5.1.1\\powershellstandard.library.5.1.1.nupkg.sha512"
+  ],
+  "logs": []
+}
