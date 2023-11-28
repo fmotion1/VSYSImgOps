@@ -11,7 +11,7 @@ function Convert-HexToHSL {
             ValueFromPipelineByPropertyName
         )]
         [ValidateNotNullOrEmpty()]
-        [pscustomobject[]]$Object,
+        [PSCustomObject[]]$Object,
 
         [Parameter(
             Mandatory,
@@ -64,6 +64,7 @@ function Convert-HexToHSL {
             $OutLight = $HSLObject.Lightness
 
             $HSLStruct = [VSYSColorStructs.HSLColor]::new()
+            $HSLStruct.Hex = $HexVal
             $HSLStruct.Hue = $OutHue
             $HSLStruct.Saturation = $OutSat
             $HSLStruct.Lightness = $OutLight

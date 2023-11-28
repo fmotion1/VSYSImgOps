@@ -82,3 +82,5 @@
         }
     }
 }
+
+# Get-ImageOverview -Path "C:\Wallpapers\Dump\g4mebjee1aw81.png"

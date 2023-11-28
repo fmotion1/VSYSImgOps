@@ -119,10 +119,7 @@
 
             Format-SpectreBreakdownChart -Data $ColorObjects -Width 100
         }
-
-
     }
-
 }
 
 # $Image = 'D:\Dev\Powershell\VSYSModules\VSYSImgOps\bin\DomColorsTestImages\TestImg 02.jpg'

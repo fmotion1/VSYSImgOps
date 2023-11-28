@@ -1,7 +1,7 @@
 ﻿# FUNCTION IS DONE
 function Convert-HexToRGB {
     [CmdletBinding()]
-    [OutputType([VSYSColorStructs.HSVColor])]
+    [OutputType([VSYSColorStructs.RGBColor])]
     param (
         [Parameter(
             Mandatory,

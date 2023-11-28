@@ -29,10 +29,7 @@
                          'PresentationCore', 
                          'PresentationFramework', 
                          'System.Web',
-                         "$PSScriptRoot\Lib\CMYKColor.dll",
-                         "$PSScriptRoot\Lib\HSLColor.dll",
-                         "$PSScriptRoot\Lib\HSVColor.dll",
-                         "$PSScriptRoot\Lib\RGBColor.dll"
+                         "$PSScriptRoot\Lib\VSYSColorStructs.dll"
 
     FunctionsToExport =  'Get-ImageDominantColors',
                          'Get-ImageDimensions',

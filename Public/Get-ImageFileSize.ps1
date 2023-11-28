@@ -84,7 +84,7 @@
                 $file = Get-Item -LiteralPath $item
                 $fileSizeBytes = $file.Length
                 [decimal]$fileSize = 0
-        
+
                 if($OutputUnits -eq 'Bytes'){
                     $fileSize = $file.Length
                     $UnitLabel = 'Bytes'
@@ -136,9 +136,9 @@
                     elseif($OutputFormat -eq 'XML')   { $XMLContents   += $SeparatedValues }
                 }
 
-                if($OutputFormat -eq 'None')  { 
+                if($OutputFormat -eq 'None')  {
                     if($HideDefaultUnitLabels){
-                        $DefaultUnits  += $fileSize 
+                        $DefaultUnits  += $fileSize
                     }
                     else {
                         $DefaultUnits  += "$fileSize $unitLabel"
@@ -172,3 +172,5 @@
         }
     }
 }
+
+# Get-ImageFileSize -LiteralPath "C:\Wallpapers\Dump\g4mebjee1aw81.png"

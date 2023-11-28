@@ -1,0 +1,13 @@
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSColorStructs\bin\Release\net6.0\VSYSColorStructs.deps.json
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSColorStructs\bin\Release\net6.0\VSYSColorStructs.dll
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSColorStructs\bin\Release\net6.0\VSYSColorStructs.pdb
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSColorStructs\obj\Release\net6.0\VSYSColorStructs.csproj.AssemblyReference.cache
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSColorStructs\obj\Release\net6.0\VSYSColorStructs.GeneratedMSBuildEditorConfig.editorconfig
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSColorStructs\obj\Release\net6.0\VSYSColorStructs.AssemblyInfoInputs.cache
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSColorStructs\obj\Release\net6.0\VSYSColorStructs.AssemblyInfo.cs
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSColorStructs\obj\Release\net6.0\VSYSColorStructs.csproj.CoreCompileInputs.cache
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSColorStructs\obj\Release\net6.0\VSYSColorStructs.sourcelink.json
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSColorStructs\obj\Release\net6.0\VSYSColorStructs.dll
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSColorStructs\obj\Release\net6.0\refint\VSYSColorStructs.dll
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSColorStructs\obj\Release\net6.0\VSYSColorStructs.pdb
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSColorStructs\obj\Release\net6.0\ref\VSYSColorStructs.dll

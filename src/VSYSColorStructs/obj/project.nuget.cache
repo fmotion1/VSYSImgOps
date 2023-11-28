@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "zBAHn9WILTorOIP3JIVibfN/HsAOpEvJPFW/lfsls4SZPrv+8238LWjShwtgt9Fn2ACJtjHVxhlRZeB88+g+2Q==",
+  "success": true,
+  "projectFilePath": "D:\\Dev\\Powershell\\VSYSModules\\VSYSImgOps\\src\\VSYSColorStructs\\VSYSColorStructs.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\futur\\.nuget\\packages\\powershellstandard.library\\5.1.1\\powershellstandard.library.5.1.1.nupkg.sha512"
+  ],
+  "logs": []
+}
