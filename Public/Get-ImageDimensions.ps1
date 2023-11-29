@@ -1,3 +1,4 @@
+# DONE 1
 function Get-ImageDimensions {
 
     [cmdletbinding(DefaultParameterSetName = 'Path')]
@@ -25,19 +26,7 @@ function Get-ImageDimensions {
 
         [Parameter(Mandatory=$false)]
         [Switch]
-        $WidthOnly,
-
-        [Parameter(Mandatory=$false)]
-        [Switch]
-        $HeightOnly,
-
-        [Parameter(Mandatory=$false)]
-        [Switch]
-        $IncludeImageColumn,
-
-        [Parameter(Mandatory=$false)]
-        [Switch]
-        $PrettyPrint
+        $All
 
     )
 
@@ -58,31 +47,33 @@ function Get-ImageDimensions {
         foreach ($item in $resolvedPaths) {
 
             $Image = [System.Drawing.Image]::FromFile($item)
+            $ImageName = Split-Path $item -Leaf
 
-            $Width = $Image.Width
-            $Height = $Image.Height
+            $ImgWidth = $Image.Width
+            $ImgHeight = $Image.Height
+
             $Image.Dispose()
 
-            if(!$PrettyPrint){
-                if($WidthOnly){ return $Width }
-                if($HeightOnly){ return $Height }
-            }
-            
-            $ReturnObject = [PSCustomObject]@{
-                Width  = $Width
-                Height = $Height
-            }
-
-            if($IncludeImageColumn){
-                $ReturnObject | Add-Member -Name 'Image' -Type NoteProperty -Value $item
-            }
-
-            if(!$PrettyPrint){
-                $ReturnObject
+            if($All){
+                [PSCustomObject]@{
+                    Width  = $ImgWidth
+                    Height = $ImgHeight
+                    ImageName = $ImageName
+                    ImagePath = $item
+                }
             }else{
-                '{0} ({1}x{2})' -f $item, $Width, $Height
+                [PSCustomObject]@{
+                    Width = $ImgWidth
+                    Height = $ImgHeight
+                    ImageName = $ImageName
+                }
             }
             
         }
     }
 }
+
+# $ImageA = "D:\Dev\Powershell\VSYSModules\VSYSImgOps\bin\DomColorsTestImages\TestImg 07.jpg"
+# $ImageB = "D:\Dev\Powershell\VSYSModules\VSYSImgOps\bin\DomColorsTestImages\TestImg 02.jpg"
+# $ImageC = "D:\Dev\Powershell\VSYSModules\VSYSImgOps\bin\DomColorsTestImages\TestImg 05.jpg"
+# Get-ImageDimensions $ImageA, $ImageB, $ImageC

@@ -1,39 +1,45 @@
-﻿# FUNCTION IS DONE
+﻿# DONE 1
 function Convert-RGBToHSV {
     [CmdletBinding()]
     [OutputType([VSYSColorStructs.HSVColor])]
     param (
         [Parameter(
             Mandatory,
-            Position=0,
-            ParameterSetName="PSCustom",
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName
+            ValueFromPipelineByPropertyName,
+            ParameterSetName = 'Individual'
         )]
-        [ValidateNotNullOrEmpty()]
-        [pscustomobject[]]$Object,
+        [Alias("R")]
+        [byte]$Red,
 
-        [Parameter(Mandatory, ParameterSetName = 'String')]
-        [ValidateNotNullOrEmpty()]
-        [string]$R,
+        [Parameter(
+            Mandatory,
+            ValueFromPipelineByPropertyName,
+            ParameterSetName = 'Individual'
+        )]
+        [Alias("G")]
+        [byte]$Green,
 
-        [Parameter(Mandatory, ParameterSetName = 'String')]
-        [ValidateNotNullOrEmpty()]
-        [string]$G,
+        [Parameter(
+            Mandatory,
+            ValueFromPipelineByPropertyName,
+            ParameterSetName = 'Individual'
+        )]
+        [Alias("B")]
+        [byte]$Blue,
 
-        [Parameter(Mandatory, ParameterSetName = 'String')]
-        [ValidateNotNullOrEmpty()]
-        [string]$B
+        [Parameter(
+            Mandatory,
+            Position = 0,
+            ParameterSetName="RGBStruct",
+            ValueFromPipeline
+        )]
+        [VSYSColorStructs.RGBColor[]]$RGBStruct
     )
 
     process {
 
         $RGBToHSV = {
-            param (
-                [String]$R,
-                [String]$G,
-                [String]$B
-            )
+            param ([byte]$R, [byte]$G, [byte]$B)
 
             # Normalize RGB values to the range 0-1
             $red   = $R / 255.0
@@ -79,28 +85,23 @@ function Convert-RGBToHSV {
             $sRounded = [Math]::Round($s, 2)
             $vRounded = [Math]::Round($v, 2)
 
-            return @($hRounded, $sRounded, $vRounded)
+            [VSYSColorStructs.HSVColor]::new($hRounded, $sRounded, $vRounded)
         }
 
-        if($PSCmdlet.ParameterSetName -eq 'PSCustom'){
-            foreach ($RGBObject in $Object) {
-                $RGBObject.R = $Object.R
-                $RGBObject.G = $Object.G
-                $RGBObject.B = $Object.B
-                $ObjectsCollection = & $RGBToHSV -R $RGBObject.R -G $RGBObject.G -B $RGBObject.B
+        if($PSCmdlet.ParameterSetName -eq 'Individual'){
+            & $RGBToHSV -R $Red -G $Green -B $Blue
+        }
+
+        if($PSCmdlet.ParameterSetName -eq 'RGBStruct'){
+            foreach($Color in $RGBStruct){
+                $Obj = [PSCustomObject]@{
+                    R = $Color.R
+                    G = $Color.G
+                    B = $Color.B
+                }
+                & $RGBToHSV -R $Obj.R -G $Obj.G -B $Obj.B
             }
         }
-
-        if($PSCmdlet.ParameterSetName -eq 'String'){
-            $ObjectsCollection = & $RGBToHSV -R $R -G $G -B $B
-        }
-
-        $HSVStruct = [VSYSColorStructs.HSVColor]::new()
-        $HSVStruct.Hue = $ObjectsCollection[0]
-        $HSVStruct.Saturation = $ObjectsCollection[1]
-        $HSVStruct.Value = $ObjectsCollection[2]
-        $HSVStruct
-
     }
 }
 

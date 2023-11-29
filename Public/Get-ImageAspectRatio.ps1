@@ -1,4 +1,5 @@
-﻿function Get-ImageAspectRatio {
+﻿# DONE 1
+function Get-ImageAspectRatio {
     [cmdletbinding(DefaultParameterSetName = 'Path')]
     param(
         [parameter(
@@ -24,7 +25,7 @@
 
         [Parameter(Mandatory=$false)]
         [Switch]
-        $IncludeImage
+        $IncludePath
     )
 
     begin {
@@ -38,10 +39,8 @@
                 $b = $a % $b
                 $a = $temp
             }
-        
             return $a
         }
-
     }
 
     process {
@@ -67,20 +66,27 @@
                 $aspectRatioH = ($height / $gcd) -as [String]
                 $aspectRatio = $aspectRatioW + ":" + $aspectRatioH
                 
-                if($IncludeImage){
+                if($IncludePath){
                     [PSCustomObject][ordered]@{
-                        Image = $item
                         AspectRatio = $aspectRatio
+                        Image = Split-Path $item -Leaf
+                        Path = Split-Path $item -Parent
                     }
                 } else {
-                    $aspectRatio
+                    [PSCustomObject][ordered]@{
+                        AspectRatio = $aspectRatio
+                    }
                 }
             }
-    
         }
         catch {
-            Write-Error "An error occured: $_"
-            $Error[0] | Format-List * -Force
+            throw "An error occured: $_"
         }
     }
 }
+
+
+# $ImageA = "D:\Dev\Powershell\VSYSModules\VSYSImgOps\bin\DomColorsTestImages\TestImg 07.jpg"
+# $ImageB = "D:\Dev\Powershell\VSYSModules\VSYSImgOps\bin\DomColorsTestImages\TestImg 02.jpg"
+# $ImageC = "D:\Dev\Powershell\VSYSModules\VSYSImgOps\bin\DomColorsTestImages\TestImg 05.jpg"
+# Get-ImageAspectRatio -Path $ImageA, $ImageB, $ImageC 

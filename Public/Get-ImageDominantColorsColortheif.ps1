@@ -8,9 +8,7 @@
             ValueFromPipeline,
             ValueFromPipelineByPropertyName
         )]
-        [ValidateNotNullOrEmpty()]
-        [SupportsWildcards()]
-        [string[]]$Path,
+        [string]$Path,
 
         [parameter(
             Mandatory,
@@ -18,13 +16,12 @@
             Position = 0,
             ValueFromPipelineByPropertyName
         )]
-        [ValidateNotNullOrEmpty()]
         [Alias('PSPath')]
-        [string[]]$LiteralPath,
+        [string]$LiteralPath,
 
         [Parameter(Mandatory=$false)]
         [Int32]
-        $NumColors = 6,
+        $NumColors = 8,
 
         # Quality: 1 is the highest quality. 
         [Parameter(Mandatory = $false)]
@@ -57,14 +54,7 @@
             return 2
         }
 
-        # Setup return containers
-        if($OutputFormat -eq 'PSObject'){ $PSObjContents = @() }
-        if($OutputFormat -eq 'Table')   { $TableContents = @() }
-        if($OutputFormat -eq 'JSON')    { $JSONContents  = @() }
-        if($OutputFormat -eq 'XML')     { $XMLContents   = @() }
-        if($OutputFormat -eq 'NONE')    { $BareContents  = @() }
-        if($OutputFormat -eq 'Array')   { $ArrayContents = @() }
-        $FinalColorList = @()
+        
     }
 
     process {
@@ -83,25 +73,27 @@
 
         $Params = $Script, '-i', $Path, '-q', $QualityNum, '-n', $NumColors
         $PaletteArr = & $PYCMD $Params
+        $PaletteArr
 
-        $sArr = $PaletteArr -replace '^\[|\]$' -split '\), \('
 
-        $resultArray = @()
-        $sArr | ForEach-Object {
-            $tupleString = $_ -replace '^\(|\)$'
-            $resultArray += $tupleString
+        # $sArr = $PaletteArr -replace '^\[|\]$' -split '\), \('
 
-            # $resultArray = $tupleString -split ', ' #| ForEach-Object { [int]$_ }
-        }
+        # $resultArray = @()
+        # $sArr | ForEach-Object {
+        #     $tupleString = $_ -replace '^\(|\)$'
+        #     $resultArray += $tupleString
 
-        if($OutputFormat -eq 'None'){
-            $resultArray
+        #     # $resultArray = $tupleString -split ', ' #| ForEach-Object { [int]$_ }
+        # }
 
-        }
-        elseif($OutputFormat -eq 'PSObjectArray'){
-            $PSArr = @()
+        # if($OutputFormat -eq 'None'){
+        #     $resultArray
+
+        # }
+        # elseif($OutputFormat -eq 'PSObjectArray'){
+        #     $PSArr = @()
             
-        }
+        # }
         #[PSCustomObject]@{R = $tupleArray[0]; G = $tupleArray[1]; B = $tupleArray[2]}
 
         #$resultArray

@@ -1,4 +1,5 @@
-﻿function Get-ImageDominantColors {
+﻿# DONE 1
+function Get-ImageDominantColors {
     [CmdletBinding()]
     param (
         [parameter(
@@ -8,9 +9,7 @@
             ValueFromPipeline,
             ValueFromPipelineByPropertyName
         )]
-        [ValidateNotNullOrEmpty()]
-        [SupportsWildcards()]
-        [string[]]$Path,
+        [string]$Path,
 
         [parameter(
             Mandatory,
@@ -18,9 +17,8 @@
             Position = 0,
             ValueFromPipelineByPropertyName
         )]
-        [ValidateNotNullOrEmpty()]
         [Alias('PSPath')]
-        [string[]]$LiteralPath,
+        [string]$LiteralPath,
 
         [Parameter(Mandatory = $false)]
         [Int32]
@@ -29,12 +27,7 @@
         [Parameter(Mandatory=$false)]
         [Alias("c")]
         [Int32]
-        $NumColors,
-
-        [Parameter(Mandatory = $false)]
-        [ValidateSet('None', 'PSObjectArray', 'JSON', 'XML', 'Table', 'Array', IgnoreCase = $true)]
-        [String]
-        $OutputFormat = 'None',
+        $NumColors = 8,
 
         [Parameter(Mandatory=$false)]
         [Switch]
@@ -42,11 +35,7 @@
 
         [Parameter(Mandatory = $false)]
         [Int32]
-        $PreviewColorWidth = 120,
-
-        [Parameter(Mandatory = $false)]
-        [Switch]
-        $PreviewNoLabel
+        $PreviewWidth = 120
     )
 
     begin {
@@ -55,18 +44,6 @@
             Write-Error "Invalid number of colors. Range is 2-15."
             return 2
         }
-
-        # Setup return containers
-        if($OutputFormat -eq 'PSObject'){ $PSObjContents = @() }
-        if($OutputFormat -eq 'Table'){ $TableContents = @() }
-        if($OutputFormat -eq 'JSON'){ $JSONContents = @() }
-        if($OutputFormat -eq 'XML'){ $XMLContents = @() }
-        if($OutputFormat -eq 'NONE'){ $BareContents = @() }
-        if($OutputFormat -eq 'Array'){ $ArrayContents = @() }
-
-        $FinalColorList = @()
-
-
     }
 
     process {
@@ -77,30 +54,19 @@
         $Params = $Script, '-i', $Path, '-r', $PreResize, '-n', $NumColors, '-o', 'List'
         $Colors = & $PYCMD $Params
 
-        $FinalColorList = $Colors
+        $PSObjArr = @()
 
-        if($OutputFormat -eq 'None'){
-            return $FinalColorList
-        }
-        elseif($OutputFormat -eq 'PSObjectArray'){
-
-            $ObjArr = @()
-            
-            for ($idx = 0; $idx -eq $FinalColorList.Count; $idx++) {
-                $HexColor = $FinalColorList[$idx]
-                $RGBValues = Convert-HexToRGB -HexColor $HexColor
-                
-                $ObjTemp = [PSCustomObject]@{
-                    ColorIndex = $idx
-                    Hex = $FinalColorList[$idx]
-                    RGB = "$($RGBValues.Red),$($RGBValues.Green),$($RGBValues.Blue)"
-                    HSL = $RGBValues.Green
-                    B = $RGBValues.Blue
-                }
+        for ($idx = 0; $idx -lt $Colors.Count; $idx++) {
+            $PSO = [PSCustomObject]@{
+                Index = $idx
+                Hex = $Colors[$idx]
+                RGB = Convert-HexToRGB -Hex $Colors[$idx]
+                HSL = Convert-HexToHSL -Hex $Colors[$idx]
             }
+            $PSObjArr += $PSO
         }
 
-
+        
     }
 
     end {
@@ -109,20 +75,23 @@
 
         if($PreviewColors){
             $ColorObjects = @()
-            for ($idx = 0; $idx -lt $FinalColorList.Count; $idx++) {
-
-                if($PreviewNoLabel){ $LabelVal = '' }
-                else{ $LabelVal = $FinalColorList[$idx] }
-
-                $ColorObjects += @{ Label = $LabelVal; Value = 1; Color = $FinalColorList[$idx] }
+            foreach ($Obj in $PSObjArr) {
+                $ColorObjects += @{ Label = $Obj.Hex; Value = 1.5; Color = $Obj.Hex }
             }
-
-            Format-SpectreBreakdownChart -Data $ColorObjects -Width 100
+            Format-SpectreBreakdownChart -Data $ColorObjects -Width $PreviewWidth
+        } else{
+            foreach ($Obj in $PSObjArr) {
+                [PSCustomObject]@{
+                    Index = $Obj.Index
+                    Hex = $Obj.Hex
+                    RGB = $Obj.RGB.ToString()
+                    HSL = $Obj.HSL.ToString()
+                }
+            }
         }
     }
 }
 
-# $Image = 'D:\Dev\Powershell\VSYSModules\VSYSImgOps\bin\DomColorsTestImages\TestImg 02.jpg'
-# $Colors = Get-ImageDominantColors -Path $Image -NumColors 8 -PreviewColors -PreviewNoLabel
-# Write-Host "`$Colors:" $Colors -ForegroundColor Green
+# $Image = "D:\Dev\Powershell\VSYSModules\VSYSImgOps\bin\DomColorsTestImages\TestImg 06.jpg"
+# Get-ImageDominantColors -Path $Image -NumColors 8 -PreviewColors
 

@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace VSYSColorStructs
 {
-    public struct CMYKColor
+    public sealed class CMYKColor
     {
         public int Cyan { get; }
         public int Magenta { get; }
@@ -29,9 +29,15 @@ namespace VSYSColorStructs
             Yellow = y;
             Key = k;
         }
+
+        public override string ToString()
+        {
+            return "(" + Cyan + "," + Magenta + "," + Yellow + "," + Key + ")";
+        }
+        
     }
 
-    public struct HSLColor
+    public sealed class HSLColor
     {
         public int Hue { get; }
         public int Saturation { get; }
@@ -53,9 +59,14 @@ namespace VSYSColorStructs
             Saturation = s;
             Lightness = l;
         }
+
+        public override string ToString()
+        {
+            return "(" + Hue + "," + Saturation + "," + Lightness + ")";
+        }
     }
 
-    public struct HSVColor
+    public sealed class HSVColor
     {
         public int Hue { get; }
         public int Saturation { get; }
@@ -77,9 +88,14 @@ namespace VSYSColorStructs
             Saturation = s;
             Value = v;
         }
+
+        public override string ToString()
+        {
+            return "(" + Hue + "," + Saturation + "," + Value + ")";
+        }
     }
 
-    public struct RGBColor
+    public sealed class RGBColor
     {
         public byte R { get; }
         public byte G { get; }
@@ -93,19 +109,51 @@ namespace VSYSColorStructs
             G = g;
             B = b;
         }
+
+        public override string ToString()
+        {
+            return "(" + R + "," + G + "," + B + ")";
+        }
+
+
     }
 
-    public struct HexColor
+    public sealed class HexColor
     {
 
         public string Hex { get; }
 
         public HexColor(string h)
         {
-            if (!Regex.IsMatch(h, "[#][0-9A-Fa-f]{6}")) {
+            if (!Regex.IsMatch(h, "^#([A-Fa-f0-9]{6})$")) {
                 throw new ArgumentException("Supplied HEX color is malformed.");
             }
             Hex = h;
+        }
+
+        public override string ToString()
+        {
+            return Hex;
+        }
+
+    }
+
+    public sealed class HexColorWithAlpha
+    {
+
+        public string Hex { get; }
+
+        public HexColorWithAlpha(string h)
+        {
+            if (!Regex.IsMatch(h, "^#([0-9A-Fa-f]{6})([0-9A-Fa-f]{2})$")) {
+                throw new ArgumentException("Supplied HEX color is malformed.");
+            }
+            Hex = h;
+        }
+
+        public override string ToString()
+        {
+            return Hex;
         }
 
     }

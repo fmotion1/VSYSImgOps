@@ -1,71 +1,72 @@
-﻿# FUNCTION IS DONE
+﻿# DONE 1
 function Convert-HexToRGB {
     [CmdletBinding()]
     [OutputType([VSYSColorStructs.RGBColor])]
     param (
         [Parameter(
             Mandatory,
-            ParameterSetName = 'PSCustom',
             Position = 0,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName
+            ValueFromPipelineByPropertyName,
+            ParameterSetName = 'Hex'
         )]
-        [ValidateNotNullOrEmpty()]
-        [pscustomobject[]]$Object,
+        [String[]]$Hex,
 
         [Parameter(
             Mandatory,
-            ParameterSetName = 'String',
             Position = 0,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName
+            ParameterSetName="HEXStruct",
+            ValueFromPipeline
         )]
-        [ValidateNotNullOrEmpty()]
-        [string[]]$Hex
+        [VSYSColorStructs.HexColor[]]$HEXStruct,
+
+        [Parameter(Mandatory = $false)]
+        [ValidateSet(0,1,2,3,4)]
+        [Int32]
+        $Precision = 2
+
     )
 
     process {
 
+        $HexToRGB = {
+            param ([string]$HexColor)
+            $hexval = $HexColor -replace '^#', ''
+            $r = [convert]::ToInt32($hexval.Substring(0, 2), 16)
+            $g = [convert]::ToInt32($hexval.Substring(2, 2), 16)
+            $b = [convert]::ToInt32($hexval.Substring(4, 2), 16)
+            [VSYSColorStructs.RGBColor]::new($r, $g, $b)
+        }
+
+        $HexArray = @()
         $InputHex = @()
-        $ValidHexArray = @()
 
-
-        if($PSCmdlet.ParameterSetName -eq 'PSCustom'){
-            foreach ($HexObject in $Object) {
-                $InputHex += $HexObject.Hex
+        if($PSCmdlet.ParameterSetName -eq 'Hex'){
+            foreach ($H in $Hex) {
+                $InputHex += $H
             }
         }
-        if($PSCmdlet.ParameterSetName -eq 'String'){
-            foreach ($HexString in $Hex) {
-                $InputHex += $HexString
+
+        if($PSCmdlet.ParameterSetName -eq 'HEXStruct'){
+            foreach ($H in $HEXStruct) {
+                $InputHex += $H.Hex
             }
         }
 
         # Validation
-        foreach ($HexTest in $InputHex) {
-            $IsValidHex = Confirm-WellFormedHex -Hex $HexTest
-            if($IsValidHex){
-                $ValidHexArray += $HexTest
+        foreach ($H in $InputHex) {
+            $ValidHex = Confirm-WellFormedHex -Hex $H
+            if($ValidHex){
+                $HexArray += $H
+            }else{
+                $PSCmdlet.ThrowTerminatingError("A hex value supplied is malformed.")
             }
         }
 
-        foreach ($HexValue in $ValidHexArray) {
-
-            $HexValTest = $HexValue.TrimStart('#')
-
-            # Convert Hex to RGB
-            $R = [convert]::ToInt32($HexValTest.Substring(0, 2), 16)
-            $G = [convert]::ToInt32($HexValTest.Substring(2, 2), 16)
-            $B = [convert]::ToInt32($HexValTest.Substring(4, 2), 16)
-            
-            $RGBStruct = [VSYSColorStructs.RGBColor]::new()
-            $RGBStruct.Red = $R
-            $RGBStruct.Green = $G
-            $RGBStruct.Blue = $B
-            $RGBStruct
-
+        foreach ($val in $HexArray) {
+            & $HexToRGB -HexColor $val
         }
     }
 }
 
-# Convert-HexToRGB -Hex '#FFFFFF', '#445867'
+# $Val = Convert-HexToRGB -Hex '#FFFFFF'
+# $Val.ToString()

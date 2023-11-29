@@ -1,39 +1,45 @@
-﻿# FUNCTION IS DONE
+﻿# DONE 1
 function Convert-RGBToHSL {
     [CmdletBinding()]
     [OutputType([VSYSColorStructs.HSLColor])]
     param (
         [Parameter(
             Mandatory,
-            Position=0,
-            ParameterSetName="PSCustom",
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName
+            ValueFromPipelineByPropertyName,
+            ParameterSetName = 'Individual'
         )]
-        [ValidateNotNullOrEmpty()]
-        [pscustomobject[]]$Object,
+        [Alias("R")]
+        [byte]$Red,
 
-        [Parameter(Mandatory, ParameterSetName = 'String')]
-        [ValidateNotNullOrEmpty()]
-        [string]$R,
+        [Parameter(
+            Mandatory,
+            ValueFromPipelineByPropertyName,
+            ParameterSetName = 'Individual'
+        )]
+        [Alias("G")]
+        [byte]$Green,
 
-        [Parameter(Mandatory, ParameterSetName = 'String')]
-        [ValidateNotNullOrEmpty()]
-        [string]$G,
+        [Parameter(
+            Mandatory,
+            ValueFromPipelineByPropertyName,
+            ParameterSetName = 'Individual'
+        )]
+        [Alias("B")]
+        [byte]$Blue,
 
-        [Parameter(Mandatory, ParameterSetName = 'String')]
-        [ValidateNotNullOrEmpty()]
-        [string]$B
+        [Parameter(
+            Mandatory,
+            Position = 0,
+            ParameterSetName="RGBStruct",
+            ValueFromPipeline
+        )]
+        [VSYSColorStructs.RGBColor[]]$RGBStruct
     )
 
     process {
 
         $RGBToHSL = {
-            param (
-                [String]$R,
-                [String]$G,
-                [String]$B
-            )
+            param ([byte]$R, [byte]$G, [byte]$B)
 
             # Normalize RGB values to the range 0-1
             $red   = $R / 255.0
@@ -78,29 +84,23 @@ function Convert-RGBToHSL {
             $sRounded = [Math]::Round($s, 2)
             $lRounded = [Math]::Round($l, 2)
 
-            return @($hRounded, $sRounded, $lRounded)
+            [VSYSColorStructs.HSLColor]::new($hRounded, $sRounded, $lRounded)
 
         }
 
-        if($PSCmdlet.ParameterSetName -eq 'PSCustom'){
-            foreach ($RGBObject in $Object) {
-                $RGBObject.R = $Object.R
-                $RGBObject.G = $Object.G
-                $RGBObject.B = $Object.B
-                $ObjectsCollection = & $RGBToHSL -R $RGBObject.R -G $RGBObject.G -B $RGBObject.B
+        if($PSCmdlet.ParameterSetName -eq 'Individual'){
+            & $RGBToHSL -R $Red -G $Green -B $Blue
+        }
+
+        if($PSCmdlet.ParameterSetName -eq 'RGBStruct'){
+            foreach($Color in $RGBStruct){
+                $Obj = [PSCustomObject]@{
+                    R = $Color.R
+                    G = $Color.G
+                    B = $Color.B
+                }
+                & $RGBToHSL -R $Obj.R -G $Obj.G -B $Obj.B
             }
         }
-
-        if($PSCmdlet.ParameterSetName -eq 'String'){
-            $ObjectsCollection = & $RGBToHSL -R $R -G $G -B $B
-        }
-
-        $HSLStruct = [VSYSColorStructs.HSLColor]::new()
-        $HSLStruct.Hue = $ObjectsCollection[0]
-        $HSLStruct.Saturation = $ObjectsCollection[1]
-        $HSLStruct.Lightness = $ObjectsCollection[2]
-        $HSLStruct
     }
 }
-
-#Convert-RGBToHSL -R 200 -G 200 -B 200

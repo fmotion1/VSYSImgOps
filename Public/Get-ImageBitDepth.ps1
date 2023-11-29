@@ -1,4 +1,5 @@
-﻿function Get-ImageBitDepth {
+﻿# DONE 1
+function Get-ImageBitDepth {
     [cmdletbinding(DefaultParameterSetName = 'Path')]
     param(
         [parameter(
@@ -20,27 +21,8 @@
         )]
         [ValidateNotNullOrEmpty()]
         [Alias('PSPath')]
-        [string[]]$LiteralPath,
-
-        [Parameter(Mandatory = $false)]
-        [Switch]
-        $ReturnFullFormat,
-
-        [Parameter(Mandatory = $false)]
-        [ValidateSet('None', 'PSObject', 'JSON', 'XML', 'Table', IgnoreCase = $true)]
-        [String]
-        $OutputFormat = 'None'
+        [string[]]$LiteralPath
     )
-
-    begin {
-
-        # Setup return containers
-        if($OutputFormat -eq 'PSObject'){ $PSObjContents = @() }
-        if($OutputFormat -eq 'Table'){ $TableContents = @() }
-        if($OutputFormat -eq 'JSON'){ $JSONContents = @() }
-        if($OutputFormat -eq 'XML'){ $XMLContents = @() }
-        if($OutputFormat -eq 'NONE'){ $BareContents = @()}
-    }
 
     process {
         # Resolve path(s)
@@ -49,6 +31,8 @@
         } elseif ($PSCmdlet.ParameterSetName -eq 'LiteralPath') {
             $resolvedPaths = Resolve-Path -LiteralPath $LiteralPath | Select-Object -ExpandProperty Path
         }
+
+        $PSObjects = @()
 
         foreach ($item in $resolvedPaths) {
 
@@ -63,55 +47,29 @@
                     $shortBitDepth = $Matches[1]
                 }
 
-                $FullObject = [pscustomobject]@{
-                    Image     = $item
-                    BitDepth  = $fullBitDepth
+                $PSObj = [PSCustomObject]@{
+                    FullBitDepth = $fullBitDepth
+                    ShortBitDepth = "$shortBitDepth-Bit"
+                    Image = Split-Path $item -Leaf
+                    Path = Split-Path $item -Parent
                 }
 
-                $MinimalObject = [pscustomobject]@{
-                    Image      = $item
-                    BitDepth   = $shortBitDepth
-                }
+                $PSObjects += $PSObj
 
-                if($ReturnFullFormat.IsPresent){
-                    if($OutputFormat -eq 'PSObject')  { $PSObjContents += $FullObject }
-                    elseif($OutputFormat -eq 'JSON')  { $JSONContents  += $FullObject }
-                    elseif($OutputFormat -eq 'Table') { $TableContents += $FullObject }
-                    elseif($OutputFormat -eq 'XML')   { $XMLContents   += $FullObject }
-                    elseif($OutputFormat -eq 'None')  { $BareContents  += $fullBitDepth }
-                }
-                elseif(!$ReturnFullFormat){
-                    if($OutputFormat -eq 'PSObject')  { $PSObjContents += $MinimalObject }
-                    elseif($OutputFormat -eq 'JSON')  { $JSONContents  += $MinimalObject }
-                    elseif($OutputFormat -eq 'Table') { $TableContents += $MinimalObject }
-                    elseif($OutputFormat -eq 'XML')   { $XMLContents   += $MinimalObject }
-                    elseif($OutputFormat -eq 'None')  { $BareContents  += $shortBitDepth }
-                }
             }
             catch {
                 Write-Error "A critical error occured: $_"
                 $Error[0] | Format-List * -Force
             }
         }
-    }
 
-    end {
-
-        if($OutputFormat -eq 'PSObject'){
-            $PSObjContents
-        }
-        elseif($OutputFormat -eq 'Table'){
-            Format-SpectreTable -Data $TableContents -Border Square -Color Grey35
-        }
-        elseif($OutputFormat -eq 'JSON') {
-            $JSONContents | ConvertTo-Json
-        }
-        elseif($OutputFormat -eq 'XML') {
-            ConvertTo-XML -As String -InputObject $XMLContents -Depth 5
-        }
-        elseif($OutputFormat -eq 'NONE') {
-            $BareContents
-        }
+        $PSObjects
     }
 }
 
+
+
+# $ImageA = "D:\Dev\Powershell\VSYSModules\VSYSImgOps\bin\DomColorsTestImages\TestImg 07.jpg"
+# $ImageB = "D:\Dev\Powershell\VSYSModules\VSYSImgOps\bin\DomColorsTestImages\TestImg 02.jpg"
+# $ImageC = "D:\Dev\Powershell\VSYSModules\VSYSImgOps\bin\DomColorsTestImages\TestImg 05.jpg"
+# Get-ImageBitDepth -Path $ImageA, $ImageB, $ImageC

@@ -44,8 +44,8 @@
                          'Convert-RGBToHSL',
                          'Convert-RGBToHSV',
                          'Convert-RGBToHex',
-                         'Confirm-WellFormedHex',
-                         'Convert-RGBToCMYK'
+                         'Convert-RGBToCMYK',
+                         'Confirm-WellFormedHex'
                          
                         
 

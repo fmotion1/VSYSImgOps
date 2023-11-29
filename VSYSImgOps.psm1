@@ -11,6 +11,6 @@ Foreach ($Import in $Public) {
             [System.Management.Automation.ErrorCategory]::SyntaxError,
             $Import
         )
-        $PSCmdlet.ThrowTerminatingError($eRecord)
+        throw $eRecord
     }
 }

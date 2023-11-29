@@ -1,4 +1,6 @@
-﻿function Convert-RGBToHex {
+﻿# DONE 1
+
+function Convert-RGBToHex {
     [CmdletBinding()]
     [OutputType([VSYSColorStructs.HexColor])]
     Param(

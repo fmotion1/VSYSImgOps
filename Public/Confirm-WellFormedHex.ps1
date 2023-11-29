@@ -1,4 +1,5 @@
-﻿function Confirm-WellFormedHex {
+﻿# DONE 1
+function Confirm-WellFormedHex {
     [CmdletBinding()]
     param (
         [Parameter(
@@ -6,23 +7,30 @@
             Position=0,
             ValueFromPipeline
         )]
-        $Hex
+        $Hex,
+
+        [Parameter(Mandatory=$false)]
+        [Switch]
+        $IncludeAlpha
     )
 
     process {
 
-        $HexIsWellFormed = $Hex -match '^#([A-Fa-f0-9]{6})$'
-        if(!$HexIsWellFormed){
-            Write-Error "Your hex input is malformed. Check your format."
-            return $false
-        }
+        $RegExNoAlpha = '^#([A-Fa-f0-9]{6})$'
+        $RegExWithAlpha = '^#([0-9A-Fa-f]{6})([0-9A-Fa-f]{2})$'
 
-        # Ensure hex color is 7 characters long
-        if ($Hex.Length -ne 7) {
-            Write-Host "`$Hex:" $Hex -ForegroundColor Green
-            Write-Host "`$Hex.Length:" $Hex.Length -ForegroundColor Green
-            Write-Error "Hex color must be 7 characters long including the # symbol."
-            return $false
+        if(!$IncludeAlpha){
+            $WellFormed = $Hex -match $RegExNoAlpha
+            if(!$WellFormed){
+                Write-Error "Your hex input is malformed. Check your format."
+                return $false
+            }
+        }else{
+            $WellFormed = $Hex -match $RegExWithAlpha
+            if(!$WellFormed){
+                Write-Error "Your hex input is malformed. Check your format."
+                return $false
+            }
         }
 
         return $true
