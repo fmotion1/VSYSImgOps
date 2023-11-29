@@ -74,4 +74,4 @@ function Convert-HexToHSL {
     }
 }
 
-Convert-HexToHSL -Hex "#55FF33", "#FFFFFF"
+#Convert-HexToHSL -Hex "#55FF33", "#FFFFFF"

@@ -103,3 +103,5 @@ function Convert-RGBToHSV {
 
     }
 }
+
+Convert-RGBToHSV -R 255 -G 0 -B 255
