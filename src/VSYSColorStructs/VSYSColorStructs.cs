@@ -3,31 +3,35 @@ using System.Text.RegularExpressions;
 
 namespace VSYSColorStructs
 {
-    public sealed class CMYKColor
+    public sealed class CMYK
     {
         public int Cyan { get; }
         public int Magenta { get; }
         public int Yellow { get; }
         public int Key { get; }
 
-        public CMYKColor(int c, int m, int y, int k)
+        public CMYK(int cyan, int magenta, int yellow, int key)
         {
-            if(c > 100 || c < 0) {
-                throw new ArgumentException("Cyan is out of bounds (0-100)");
-            }
-            if(m > 100 || m < 0) {
-                throw new ArgumentException("Magenta is out of bounds (0-100)");
-            }
-            if(y > 100 || y < 0) {
-                throw new ArgumentException("Yellow is out of bounds (0-100)");
-            }
-            if(k > 100 || k < 0) {
-                throw new ArgumentException("Key is out of bounds (0-100)");
-            }
-            Cyan = c;
-            Magenta = m;
-            Yellow = y;
-            Key = k;
+            if(cyan > 100 || cyan < 0)
+                throw new ArgumentOutOfRangeException(nameof(cyan), 
+                "Cyan is out of bounds (0-100)");
+            
+            if(magenta > 100 || magenta < 0) 
+                throw new ArgumentOutOfRangeException(nameof(magenta), 
+                "Magenta is out of bounds (0-100)");
+
+            if(yellow > 100 || yellow < 0) 
+                throw new ArgumentOutOfRangeException(nameof(yellow), 
+                "Yellow is out of bounds (0-100)");
+            
+            if(key > 100 || key < 0)
+                throw new ArgumentOutOfRangeException(nameof(key), 
+                "Key is out of bounds (0-100)");
+            
+            Cyan = cyan;
+            Magenta = magenta;
+            Yellow = yellow;
+            Key = key;
         }
 
         public override string ToString()
@@ -37,27 +41,29 @@ namespace VSYSColorStructs
         
     }
 
-    public sealed class HSLColor
+    public sealed class HSL
     {
         public int Hue { get; }
         public int Saturation { get; }
         public int Lightness { get; }
 
-        public HSLColor(int h, int s, int l)
+        public HSL(int hue, int sat, int lightness)
         {
-            if(h > 300 || h < 0) {
-                throw new ArgumentException("Hue is out of bounds (0-300)");
-            }
-            if(s > 100 || s < 0) {
-                throw new ArgumentException("Saturation is out of bounds (0-100)");
-            }
-            if(l > 100 || l < 0) {
-                throw new ArgumentException("Lightness is out of bounds (0-100)");
-            }
+            if(hue > 359 || hue < 0) 
+                throw new ArgumentOutOfRangeException(nameof(hue), 
+                "Hue is out of bounds (0-359)");
+            
+            if(sat > 100 || sat < 0)
+                throw new ArgumentOutOfRangeException(nameof(sat), 
+                "Saturation is out of bounds (0-359)");
+            
+            if(lightness > 100 || lightness < 0)
+                throw new ArgumentOutOfRangeException(nameof(lightness), 
+                "Lightness is out of bounds (0-359)");
 
-            Hue = h;
-            Saturation = s;
-            Lightness = l;
+            Hue = hue;
+            Saturation = sat;
+            Lightness = lightness;
         }
 
         public override string ToString()
@@ -66,27 +72,30 @@ namespace VSYSColorStructs
         }
     }
 
-    public sealed class HSVColor
+    public sealed class HSV
     {
         public int Hue { get; }
         public int Saturation { get; }
         public int Value { get; }
 
-        public HSVColor(int h, int s, int v)
-        {
-            if(h > 300 || h < 0) {
-                throw new ArgumentException("Hue is out of bounds (0-300)");
-            }
-            if(s > 100 || s < 0) {
-                throw new ArgumentException("Saturation is out of bounds (0-100)");
-            }
-            if(v > 100 || v < 0) {
-                throw new ArgumentException("Value is out of bounds (0-100)");
-            }
 
-            Hue = h;
-            Saturation = s;
-            Value = v;
+        public HSV(int hue, int sat, int val)
+        {
+            if(hue > 359 || hue < 0)
+                throw new ArgumentOutOfRangeException(nameof(hue), 
+                "Hue is out of bounds (0-359)");
+            
+            if(sat > 100 || sat < 0)
+                throw new ArgumentOutOfRangeException(nameof(sat), 
+                "Saturation is out of bounds (0-100)");
+            
+            if(val > 100 || val < 0)
+                throw new ArgumentOutOfRangeException(nameof(val), 
+                "Value is out of bounds (0-100)");
+
+            Hue = hue;
+            Saturation = sat;
+            Value = val;
         }
 
         public override string ToString()
@@ -95,40 +104,74 @@ namespace VSYSColorStructs
         }
     }
 
-    public sealed class RGBColor
+    public sealed class RGBByte
     {
-        public byte R { get; }
-        public byte G { get; }
-        public byte B { get; }
+        public byte Red { get; }
+        public byte Green { get; }
+        public byte Blue { get; }
 
-        public RGBColor() { }
+        public RGBByte() { }
 
-        public RGBColor(byte r, byte g, byte b)
+        public RGBByte(byte red, byte green, byte blue)
         {
-            R = r;
-            G = g;
-            B = b;
+            Red = red;
+            Green = green;
+            Blue = blue;
         }
 
         public override string ToString()
         {
-            return "(" + R + "," + G + "," + B + ")";
+            return "(" + Red + "," + Green + "," + Blue + ")";
         }
-
 
     }
 
-    public sealed class HexColor
+    public sealed class RGBFloat
+    {
+        public double Red { get; }
+        public double Green { get; }
+        public double Blue { get; }
+
+        public RGBFloat() { }
+
+        public RGBFloat(double red, double green, double blue)
+        {
+
+            if(red > 1 || red < 0)
+                throw new ArgumentOutOfRangeException(nameof(red), 
+                "Red channel is out of bounds (0-1).");
+            
+            if(green > 1 || green < 0)
+                throw new ArgumentOutOfRangeException(nameof(green), 
+                "Green channel is out of bounds (0-1).");
+            
+            if(blue > 1 || blue < 0)
+                throw new ArgumentOutOfRangeException(nameof(blue), 
+                "Blue channel is out of bounds (0-1).");
+
+            Red = red;
+            Green = green;
+            Blue = blue;
+        }
+
+        public override string ToString()
+        {
+            return "(" + Red + "," + Green + "," + Blue + ")";
+        }
+
+    }
+
+    public sealed class HTMLHex
     {
 
         public string Hex { get; }
 
-        public HexColor(string h)
+        public HTMLHex(string hex)
         {
-            if (!Regex.IsMatch(h, "^#([A-Fa-f0-9]{6})$")) {
-                throw new ArgumentException("Supplied HEX color is malformed.");
-            }
-            Hex = h;
+            if (!Regex.IsMatch(hex, "^#([A-Fa-f0-9]{6})$"))
+                throw new ArgumentException("Hex is malformed.");
+            
+            Hex = hex;
         }
 
         public override string ToString()
@@ -138,17 +181,17 @@ namespace VSYSColorStructs
 
     }
 
-    public sealed class HexColorWithAlpha
+    public sealed class HTMLHexWithAlpha
     {
 
         public string Hex { get; }
 
-        public HexColorWithAlpha(string h)
+        public HTMLHexWithAlpha(string hex)
         {
-            if (!Regex.IsMatch(h, "^#([0-9A-Fa-f]{6})([0-9A-Fa-f]{2})$")) {
-                throw new ArgumentException("Supplied HEX color is malformed.");
-            }
-            Hex = h;
+            if (!Regex.IsMatch(hex, "^#([0-9A-Fa-f]{6})([0-9A-Fa-f]{2})$"))
+                throw new ArgumentException("Hex is malformed.");
+            
+            Hex = hex;
         }
 
         public override string ToString()

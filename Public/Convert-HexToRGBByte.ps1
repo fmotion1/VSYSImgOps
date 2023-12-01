@@ -1,53 +1,51 @@
-﻿# DONE 1
-function Convert-HexToRGB {
+﻿# DONE 3
+function Convert-HexToRGBByte {
     [CmdletBinding()]
-    [OutputType([VSYSColorStructs.RGBColor])]
+    [OutputType([VSYSColorStructs.RGBByte])]
     param (
         [Parameter(
             Mandatory,
             Position = 0,
             ValueFromPipelineByPropertyName,
-            ParameterSetName = 'Hex'
+            ParameterSetName = 'String'
         )]
         [String[]]$Hex,
 
         [Parameter(
             Mandatory,
             Position = 0,
-            ParameterSetName="HEXStruct",
+            ParameterSetName="Struct",
             ValueFromPipeline
         )]
-        [VSYSColorStructs.HexColor[]]$HEXStruct,
-
-        [Parameter(Mandatory = $false)]
-        [ValidateSet(0,1,2,3,4)]
-        [Int32]
-        $Precision = 2
+        [VSYSColorStructs.HTMLHex[]]$Struct
 
     )
 
     process {
 
-        $HexToRGB = {
+        $HexToRGBByte = {
+
             param ([string]$HexColor)
+
             $hexval = $HexColor -replace '^#', ''
             $r = [convert]::ToInt32($hexval.Substring(0, 2), 16)
             $g = [convert]::ToInt32($hexval.Substring(2, 2), 16)
             $b = [convert]::ToInt32($hexval.Substring(4, 2), 16)
-            [VSYSColorStructs.RGBColor]::new($r, $g, $b)
+
+            [VSYSColorStructs.RGBByte]::new($r, $g, $b)
         }
 
         $HexArray = @()
         $InputHex = @()
 
-        if($PSCmdlet.ParameterSetName -eq 'Hex'){
+        if($PSCmdlet.ParameterSetName -eq 'String'){
             foreach ($H in $Hex) {
                 $InputHex += $H
             }
         }
 
-        if($PSCmdlet.ParameterSetName -eq 'HEXStruct'){
-            foreach ($H in $HEXStruct) {
+        if($PSCmdlet.ParameterSetName -eq 'Struct'){
+            foreach ($H in $Struct) {
                 $InputHex += $H.Hex
             }
         }
@@ -58,15 +56,18 @@ function Convert-HexToRGB {
             if($ValidHex){
                 $HexArray += $H
             }else{
-                $PSCmdlet.ThrowTerminatingError("A hex value supplied is malformed.")
+                Write-Error "A hex value supplied ($H) is malformed."
+                return 2
             }
         }
 
         foreach ($val in $HexArray) {
-            & $HexToRGB -HexColor $val
+            & $HexToRGBByte -HexColor $val
         }
     }
 }
 
-# $Val = Convert-HexToRGB -Hex '#FFFFFF'
-# $Val.ToString()
+# $Val = Convert-HexToRGBByte -Hex '#55C881'
+# $Val 
+# $S = [VSYSColorStructs.HTMLHex]::new('#294BAE')
+# $S | Convert-HexToRGBByte

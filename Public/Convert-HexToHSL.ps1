@@ -1,77 +1,83 @@
-﻿# DONE 1
+﻿# DONE 3
 function Convert-HexToHSL {
     [CmdletBinding()]
-    [OutputType([VSYSColorStructs.HSLColor])]
+    [OutputType([VSYSColorStructs.HSL])]
     param (
         [Parameter(
             Mandatory,
             Position = 0,
             ValueFromPipelineByPropertyName,
-            ParameterSetName = 'Hex'
+            ParameterSetName = 'String'
         )]
         [String[]]$Hex,
 
         [Parameter(
             Mandatory,
             Position = 0,
-            ParameterSetName="HEXStruct",
+            ParameterSetName="Struct",
             ValueFromPipeline
         )]
-        [VSYSColorStructs.HexColor[]]$HEXStruct,
-
-        [Parameter(Mandatory = $false)]
-        [ValidateSet(0,1,2,3,4)]
-        [Int32]
-        $Precision = 2
+        [VSYSColorStructs.HTMLHex[]]$Struct
     )
 
     process {
 
         $HexToHSL = {
 
-            param ([string]$HexColor)
-            $hexval = $HexColor -replace '^#', ''
-            $r = [convert]::ToInt32($hexval.SubString(0,2),16) / 255.0
-            $g = [convert]::ToInt32($hexval.SubString(2,2),16) / 255.0
-            $b = [convert]::ToInt32($hexval.SubString(4,2),16) / 255.0
+            param ([string]$hex)
 
-            # Calculate max and min
-            $max = [Math]::Max($r, [Math]::Max($g, $b))
-            $min = [Math]::Min($r, [Math]::Min($g, $b))
+            $hex = $hex -replace '^#', ''
+
+            # Extract Red, Green, Blue values from Hex
+            $r = [convert]::ToInt32($hex.SubString(0, 2), 16) / 255.0
+            $g = [convert]::ToInt32($hex.SubString(2, 2), 16) / 255.0
+            $b = [convert]::ToInt32($hex.SubString(4, 2), 16) / 255.0
+
+            # Find max and min values among RGB
+            $max = [Math]::Max([Math]::Max($r, $g), $b)
+            $min = [Math]::Min([Math]::Min($r, $g), $b)
             $delta = $max - $min
 
-            # Calculate Lightness
+            # Lightness calculation
             $l = ($max + $min) / 2
 
-            # Calculate Saturation
-            $s = $delta -eq 0 ? 0 : $delta / (1 - [Math]::Abs(2 * $l - 1))
+            # Saturation calculation
+            if ($delta -eq 0) {
+                $s = 0
+                $h = 0
+            } else {
+                $s = $delta / (1 - [Math]::Abs(2 * $l - 1))
 
-            # Calculate Hue
-            $h = $delta -eq 0 ? 0 :
-                $max -eq $r ? (60 * (($g - $b) / $delta) + 360) % 360 :
-                $max -eq $g ? 60 * (($b - $r) / $delta) + 120 :
-                60 * (($r - $g) / $delta) + 240
+                # Hue calculation
+                if ($max -eq $r) {
+                    $h = 60 * (($g - $b) / $delta)
+                    if ($g -lt $b) { $h += 360 }
+                } elseif ($max -eq $g) {
+                    $h = 60 * (($b - $r) / $delta + 2)
+                } else {
+                    $h = 60 * (($r - $g) / $delta + 4)
+                }
+            }
 
-
-            $Hue = [Math]::Round($h, 2)
-            $Saturation = [Math]::Round($s * 100, $Precision)
-            $Lightness = [Math]::Round($l * 100, $Precision)
-
-            [VSYSColorStructs.HSLColor]::new($Hue, $Saturation, $Lightness)
+            $hue = $h
+            $sat = $s * 100
+            $light = $l * 100
+        
+            [VSYSColorStructs.HSL]::new($hue, $sat, $light)
 
         }
 
         $HexArray = @()
         $InputHex = @()
 
-        if($PSCmdlet.ParameterSetName -eq 'Hex'){
+        if($PSCmdlet.ParameterSetName -eq 'String'){
             foreach ($H in $Hex) {
                 $InputHex += $H
             }
         }
 
-        if($PSCmdlet.ParameterSetName -eq 'HEXStruct'){
-            foreach ($H in $HEXStruct) {
+        if($PSCmdlet.ParameterSetName -eq 'Struct'){
+            foreach ($H in $Struct) {
                 $InputHex += $H.Hex
             }
         }
@@ -82,13 +88,21 @@ function Convert-HexToHSL {
             if($ValidHex){
                 $HexArray += $H
             }else{
-                $PSCmdlet.ThrowTerminatingError("A hex value supplied is malformed.")
+                Write-Error ("A hex value supplied ($H) is malformed.")
+                return 2
             }
         }
 
         foreach ($val in $HexArray) {
-            & $HexToHSL -HexColor $val
+            & $HexToHSL -hex $val
         }
-
     }
 }
+
+
+# $St1 = [VSYSColorStructs.HTMLHex]::new("#FFFFFF")
+# $St2 = [VSYSColorStructs.HTMLHex]::new("#C71E48")
+# $St3 = [VSYSColorStructs.HTMLHex]::new("#2AB127")
+# $St1, $St2, $St3 | Convert-HexToHSL | Format-List
+
+

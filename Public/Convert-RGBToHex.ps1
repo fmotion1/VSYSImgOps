@@ -2,39 +2,39 @@
 
 function Convert-RGBToHex {
     [CmdletBinding()]
-    [OutputType([VSYSColorStructs.HexColor])]
+    [OutputType([VSYSColorStructs.HTMLHex])]
     Param(
         [Parameter(
             Mandatory,
             ValueFromPipelineByPropertyName,
             ParameterSetName = 'Individual'
         )]
-        [Alias("R")]
-        [byte]$Red,
+        [Alias("Red")]
+        [byte]$R,
 
         [Parameter(
             Mandatory,
             ValueFromPipelineByPropertyName,
             ParameterSetName = 'Individual'
         )]
-        [Alias("G")]
-        [byte]$Green,
+        [Alias("Green")]
+        [byte]$G,
 
         [Parameter(
             Mandatory,
             ValueFromPipelineByPropertyName,
             ParameterSetName = 'Individual'
         )]
-        [Alias("B")]
-        [byte]$Blue,
+        [Alias("Blue")]
+        [byte]$B,
 
         [Parameter(
             Mandatory,
             Position = 0,
-            ParameterSetName="RGBStruct",
+            ParameterSetName="RGBByteStruct",
             ValueFromPipeline
         )]
-        [VSYSColorStructs.RGBColor[]]$RGBStruct
+        [VSYSColorStructs.RGBByte[]]$RGBByteStruct
     )
 
     Process {

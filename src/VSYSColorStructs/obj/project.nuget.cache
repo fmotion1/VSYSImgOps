@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "zBAHn9WILTorOIP3JIVibfN/HsAOpEvJPFW/lfsls4SZPrv+8238LWjShwtgt9Fn2ACJtjHVxhlRZeB88+g+2Q==",
+  "dgSpecHash": "UYYI5GDlPYQtg6KsyLScfFkJWD+lBx9yKnwCsqMriXdgyy6Q9w7R9BVIWjUkBqdsSJ1xJW0tFEuDCVcdVQ7wjQ==",
   "success": true,
   "projectFilePath": "D:\\Dev\\Powershell\\VSYSModules\\VSYSImgOps\\src\\VSYSColorStructs\\VSYSColorStructs.csproj",
   "expectedPackageFiles": [

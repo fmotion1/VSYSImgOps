@@ -1,40 +1,37 @@
-﻿# DONE 1
+﻿# DONE 3
 function Convert-HexToHSV {
     [CmdletBinding()]
-    [OutputType([VSYSColorStructs.HSVColor])]
+    [OutputType([VSYSColorStructs.HSV])]
     param (
         [Parameter(
             Mandatory,
             Position = 0,
             ValueFromPipelineByPropertyName,
-            ParameterSetName = 'Hex'
+            ParameterSetName = 'String'
         )]
         [String[]]$Hex,
 
         [Parameter(
             Mandatory,
             Position = 0,
-            ParameterSetName="HEXStruct",
+            ParameterSetName="Struct",
             ValueFromPipeline
         )]
-        [VSYSColorStructs.HexColor[]]$HEXStruct,
-
-        [Parameter(Mandatory = $false)]
-        [ValidateSet(0,1,2,3,4)]
-        [Int32]
-        $Precision = 2
-
+        [VSYSColorStructs.HTMLHex[]]$Struct
     )
 
     process {
 
         $HexToHSV = {
 
-            param ([string]$HexColor)
-            $hexval = $HexColor -replace '^#', ''
-            $r = [convert]::ToInt32($hexval.SubString(0, 2), 16) / 255.0
-            $g = [convert]::ToInt32($hexval.SubString(2, 2), 16) / 255.0
-            $b = [convert]::ToInt32($hexval.SubString(4, 2), 16) / 255.0
+            param ([string]$hex)
+
+            $hex = $hex -replace '^#', ''
+            
+            # Extract Red, Green, Blue values from Hex
+            $r = [convert]::ToInt32($hex.SubString(0, 2), 16) / 255.0
+            $g = [convert]::ToInt32($hex.SubString(2, 2), 16) / 255.0
+            $b = [convert]::ToInt32($hex.SubString(4, 2), 16) / 255.0
 
             $max = [Math]::Max($r, [Math]::Max($g, $b))
             $min = [Math]::Min($r, [Math]::Min($g, $b))
@@ -51,26 +48,25 @@ function Convert-HexToHSV {
 
             # Value is the same as Max
             $v = $max
-            
-            $Hue = [Math]::Round($h, $Precision)
-            $Saturation = [Math]::Round($s * 100, $Precision)
-            $Value = [Math]::Round($v * 100, $Precision)
 
-            [VSYSColorStructs.HSVColor]::new($Hue, $Saturation, $Value)
-            
+            $s = $s * 100
+            $v = $v * 100
+
+            [VSYSColorStructs.HSV]::new($h, $s, $v)
+
         }
 
         $HexArray = @()
         $InputHex = @()
 
-        if($PSCmdlet.ParameterSetName -eq 'Hex'){
+        if($PSCmdlet.ParameterSetName -eq 'String'){
             foreach ($H in $Hex) {
                 $InputHex += $H
             }
         }
 
-        if($PSCmdlet.ParameterSetName -eq 'HEXStruct'){
-            foreach ($H in $HEXStruct) {
+        if($PSCmdlet.ParameterSetName -eq 'Struct'){
+            foreach ($H in $Struct) {
                 $InputHex += $H.Hex
             }
         }
@@ -81,14 +77,21 @@ function Convert-HexToHSV {
             if($ValidHex){
                 $HexArray += $H
             }else{
-                $PSCmdlet.ThrowTerminatingError("A hex value supplied is malformed.")
+                Write-Error "A hex value supplied ($H) is malformed."
+                return 2
             }
         }
 
         foreach ($val in $HexArray) {
-            & $HexToHSV -HexColor $val
+            & $HexToHSV -hex $val
         }
     }
 }
 
-Convert-HexToHSV -Hex '#FFFFFF', '#445867'
+# $S1 = [VSYSColorStructs.HTMLHex]::new('#C71E48')
+# $S1 | Convert-HexToHSV
+
+# $Obj1 = [PSCustomObject]@{
+#     Hex = '#3DE77F'
+# }
+# $Obj1 | Convert-HexToHSV

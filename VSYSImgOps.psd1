@@ -32,13 +32,13 @@
                          "$PSScriptRoot\Lib\VSYSColorStructs.dll"
 
     FunctionsToExport =  'Get-ImageDominantColors',
-                         'Get-ImageDominantColorsColorthief',
                          'Get-ImageDimensions',
                          'Get-ImageBitDepth',
                          'Get-ImageAspectRatio',
                          'Get-ImageFileSize',
                          'Get-ImageOverview',
                          'Convert-HexToRGB',
+                         'Convert-HexToRGBFloat',
                          'Convert-HexToHSL',
                          'Convert-HexToHSV',
                          'Convert-RGBToHSL',

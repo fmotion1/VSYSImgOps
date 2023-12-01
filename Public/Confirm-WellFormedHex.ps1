@@ -22,13 +22,13 @@ function Confirm-WellFormedHex {
         if(!$IncludeAlpha){
             $WellFormed = $Hex -match $RegExNoAlpha
             if(!$WellFormed){
-                Write-Error "Your hex input is malformed. Check your format."
+                Write-Error "Your hex input ($Hex) is malformed. Check your format."
                 return $false
             }
         }else{
             $WellFormed = $Hex -match $RegExWithAlpha
             if(!$WellFormed){
-                Write-Error "Your hex input is malformed. Check your format."
+                Write-Error "Your hex input ($Hex) is malformed. Check your format."
                 return $false
             }
         }
