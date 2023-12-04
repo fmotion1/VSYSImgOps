@@ -5,6 +5,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DocumentationFile>bin\VSYSColorStructs.XML</DocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

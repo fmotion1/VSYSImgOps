@@ -1,5 +1,5 @@
 ﻿# DONE 1
-function Convert-RGBToHex {
+function Convert-RGBFloatToHex {
     [CmdletBinding()]
     [OutputType([VSYSColorStructs.HTMLHex])]
     Param(
@@ -9,7 +9,7 @@ function Convert-RGBToHex {
             ParameterSetName = 'Individual'
         )]
         [Alias("Red")]
-        [byte]$R,
+        [double]$R,
 
         [Parameter(
             Mandatory,
@@ -17,7 +17,7 @@ function Convert-RGBToHex {
             ParameterSetName = 'Individual'
         )]
         [Alias("Green")]
-        [byte]$G,
+        [double]$G,
 
         [Parameter(
             Mandatory,
@@ -25,7 +25,7 @@ function Convert-RGBToHex {
             ParameterSetName = 'Individual'
         )]
         [Alias("Blue")]
-        [byte]$B,
+        [double]$B,
 
         [Parameter(
             Mandatory,
@@ -38,33 +38,36 @@ function Convert-RGBToHex {
         [Parameter(
             Mandatory,
             Position = 0,
-            ParameterSetName="RGBByte",
+            ParameterSetName="RGBFloat",
             ValueFromPipeline
         )]
-        [VSYSColorStructs.RGBByte[]]$RGBByte
+        [VSYSColorStructs.RGBFloat[]]$RGBFloat
 
     )
 
     Process {
 
-        $RGBToHEX = {
-            param ([byte]$R, [byte]$G, [byte]$B)
-            $hexRed   = '{0:X2}' -f $R
-            $hexGreen = '{0:X2}' -f $G
-            $hexBlue  = '{0:X2}' -f $B
-            [VSYSColorStructs.HexColor]::new("#$hexRed$hexGreen$hexBlue")
+        $RGBFloatToHEX = {
+            param ([double]$R, [double]$G, [double]$B)
+            [byte]$RByte = (($R * 256) -as [byte])
+            [byte]$GByte = (($G * 256) -as [byte])
+            [byte]$BByte = (($B * 256) -as [byte])
+            $hR = '{0:X2}' -f $RByte
+            $hG = '{0:X2}' -f $GByte
+            $hB = '{0:X2}' -f $BByte
+            [VSYSColorStructs.HexColor]::new("#$hR$hG$hB")
         }
 
         if($PSCmdlet.ParameterSetName -eq 'Individual'){
-            & $RGBToHEX -R $Red -G $Green -B $Blue
+            & $RGBFloatToHEX -R $Red -G $Green -B $Blue
         }
 
         if($PSCmdlet.ParameterSetName -eq 'PSObject'){
-            & $RGBToHEX -R $PSObject.R -G $PSObject.G -B $PSObject.B
+            & $RGBFloatToHEX -R $PSObject.R -G $PSObject.G -B $PSObject.B
         }
 
-        if($PSCmdlet.ParameterSetName -eq 'RGBByte'){
-            & $RGBToHEX -R $RGBByte.Red -G $RGBByte.Green -B $RGBByte.Blue 
+        if($PSCmdlet.ParameterSetName -eq 'RGBFloat'){
+            & $RGBFloatToHEX -R $RGBFloat.Red -G $RGBFloat.Green -B $RGBFloat.Blue 
         }
     }
 }

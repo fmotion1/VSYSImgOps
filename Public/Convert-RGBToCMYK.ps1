@@ -1,4 +1,4 @@
-﻿# IN PROGRESS
+﻿# DONE 3
 
 function Convert-RGBToCMYK {
     [CmdletBinding()]
@@ -32,24 +32,31 @@ function Convert-RGBToCMYK {
             Mandatory,
             Position = 0,
             ValueFromPipelineByPropertyName,
-            ParameterSetName = 'String'
+            ParameterSetName = 'PSObject'
         )]
-        [String[]]$String,
+        [PSCustomObject[]]$PSObject,
 
         [Parameter(
             Mandatory,
             Position = 0,
-            ParameterSetName="RGBByteStruct",
+            ParameterSetName="RGBByte",
             ValueFromPipeline
         )]
-        [VSYSColorStructs.RGBByte[]]$RGBByteStruct
+        [VSYSColorStructs.RGBByte[]]$RGBByte,
+
+        [Parameter(
+            Mandatory,
+            Position = 0,
+            ParameterSetName="RGBFloat",
+            ValueFromPipeline
+        )]
+        [VSYSColorStructs.RGBFloat[]]$RGBFloat
     )
 
     Process {
 
         $RGBToCMYK = {
 
-            #param ([byte]$R, [byte]$G, [byte]$B)
             param ([double]$R, [double]$G, [double]$B)
 
             if ($R -eq 0 -and $G -eq 0 -and $B -eq 0) {
@@ -77,30 +84,31 @@ function Convert-RGBToCMYK {
             & $RGBToCMYK -R $R -G $G -B $B
         }
 
-        if($PSCmdlet.ParameterSetName -eq 'String'){
-            foreach ($Str in $String) {
-                $StrArr = $Str.Split(',')
-            }
-            & $RGBToCMYK -R $StrArr[0] -G $StrArr[1] -B $StrArr[2]
+        if($PSCmdlet.ParameterSetName -eq 'PSObject'){
+            & $RGBToCMYK -R $PSObject.R -G $PSObject.G -B $PSObject.B
         }
 
-        if($PSCmdlet.ParameterSetName -eq 'RGBByteStruct'){
-            & $RGBToCMYK -R $RGBByteStruct.Red -G $RGBByteStruct.Green -B $RGBByteStruct.Blue
+        if($PSCmdlet.ParameterSetName -eq 'RGBByte'){
+            & $RGBToCMYK -R $RGBByte.Red -G $RGBByte.Green -B $RGBByte.Blue
+        }
+
+        if($PSCmdlet.ParameterSetName -eq 'RGBFloat'){
+            & $RGBToCMYK -R $RGBFloat.Red -G $RGBFloat.Green -B $RGBFloat.Blue
         }
     }
 }
 
 # Convert-RGBToCMYK -r 200 -g 140 -b 200
 
-
 # $PSO1 = [PSCustomObject]@{ R = 200; G = 150; B = 90; }
 # $PSO2 = [PSCustomObject]@{ R = 60; G = 70; B = 252; }
 # $PSO1, $PSO2 | Convert-RGBToCMYK
 
 # $S1 = [VSYSColorStructs.RGBByte]::new(200,180,255)
-# Convert-RGBToCMYK -RGBByteStruct $S1
-
 # $S2 = [VSYSColorStructs.RGBByte]::new(1,2,3)
-# $S2 | Convert-RGBToCMYK
+# $S1, $S2 | Convert-RGBToCMYK
+
+# $Float = [VSYSColorStructs.RGBFloat]::new(.84534, .23447, .954)
+# $Float | Convert-RGBToCMYK
 
 # Convert-RGBToCMYK -Red 170 -Green 60 -Blue 90

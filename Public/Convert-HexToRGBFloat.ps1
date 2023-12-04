@@ -14,10 +14,10 @@ function Convert-HexToRGBFloat {
         [Parameter(
             Mandatory,
             Position = 0,
-            ParameterSetName="Struct",
+            ParameterSetName="HTMLHex",
             ValueFromPipeline
         )]
-        [VSYSColorStructs.HTMLHex[]]$Struct,
+        [VSYSColorStructs.HTMLHex[]]$HTMLHex,
 
         [Parameter(Mandatory = $false)]
         [ValidateSet(1,2,3,4,5,6,7,8,9,"MAX",IgnoreCase=$true)]
@@ -50,8 +50,8 @@ function Convert-HexToRGBFloat {
         if($PSCmdlet.ParameterSetName -eq 'String') {
             $Hex | % { $InputHex += $_}
         }
-        if($PSCmdlet.ParameterSetName -eq 'Struct'){
-            $Struct | % { $InputHex += $_}
+        if($PSCmdlet.ParameterSetName -eq 'HTMLHex'){
+            $HTMLHex | % { $InputHex += $_}
         }
 
         # Validation

@@ -3,6 +3,13 @@ using System.Text.RegularExpressions;
 
 namespace VSYSColorStructs
 {
+
+    public sealed class VSYSColor
+    
+    {
+
+    }
+
     public sealed class CMYK
     {
         public int Cyan { get; }
@@ -74,11 +81,13 @@ namespace VSYSColorStructs
 
     public sealed class HSV
     {
+        
         public int Hue { get; }
         public int Saturation { get; }
         public int Value { get; }
 
 
+        
         public HSV(int hue, int sat, int val)
         {
             if(hue > 359 || hue < 0)
@@ -104,6 +113,30 @@ namespace VSYSColorStructs
         }
     }
 
+    public sealed class RGBAByte
+    {
+        public byte Red { get; }
+        public byte Green { get; }
+        public byte Blue { get; }
+        public byte Alpha { get; }
+
+        public RGBAByte() { }
+
+        public RGBAByte(byte red, byte green, byte blue, byte alpha)
+        {
+            Red = red;
+            Green = green;
+            Blue = blue;
+            Alpha = alpha;
+        }
+
+        public override string ToString()
+        {
+            return "(" + Red + "," + Green + "," + Blue + "," + Alpha + ")";
+        }
+
+    }
+
     public sealed class RGBByte
     {
         public byte Red { get; }
@@ -122,6 +155,47 @@ namespace VSYSColorStructs
         public override string ToString()
         {
             return "(" + Red + "," + Green + "," + Blue + ")";
+        }
+
+    }
+
+    public sealed class RGBAFloat
+    {
+        public double Red { get; }
+        public double Green { get; }
+        public double Blue { get; }
+        public double Alpha { get; }
+
+        public RGBAFloat() { }
+
+        public RGBAFloat(double red, double green, double blue, double alpha)
+        {
+
+            if(red > 1 || red < 0)
+                throw new ArgumentOutOfRangeException(nameof(red), 
+                "Red channel is out of bounds (0-1).");
+            
+            if(green > 1 || green < 0)
+                throw new ArgumentOutOfRangeException(nameof(green), 
+                "Green channel is out of bounds (0-1).");
+            
+            if(blue > 1 || blue < 0)
+                throw new ArgumentOutOfRangeException(nameof(blue), 
+                "Blue channel is out of bounds (0-1).");
+
+            if(alpha > 1 || alpha < 0)
+                throw new ArgumentOutOfRangeException(nameof(alpha), 
+                "Alpha channel is out of bounds (0-1).");
+
+            Red = red;
+            Green = green;
+            Blue = blue;
+            Alpha = alpha;
+        }
+
+        public override string ToString()
+        {
+            return "(" + Red + "," + Green + "," + Blue + "," + Alpha + ")";
         }
 
     }

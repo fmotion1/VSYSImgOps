@@ -1,2 +1,3 @@
+Push-Location $PSScriptRoot -StackName DotnetBuild
 dotnet build .\VSYSColorStructs.csproj --configuration Release
-Read-Host "Press any key to exit."
+Pop-Location -StackName DotnetBuild
