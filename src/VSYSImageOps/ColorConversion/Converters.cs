@@ -2,12 +2,78 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using VSYSColorOps.ColorConversion;
+using VSYSImgOps.Color;
 
-namespace VSYSColorOps.ColorConversion
+namespace VSYSImgOps.Color
 {
-    public class RGBConverters
+    public static class Converters
     {
+
+        // HEX CONVERTERS ///////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////
+
+        public static (float R, float G, float B) HexToRGBFloat(string hex)
+        {
+            // Remove '#' if it exists
+            if (hex.StartsWith("#"))
+            {
+                hex = hex.Substring(1);
+            }
+        
+            // Check if valid hex color
+            if (!int.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int intColor))
+            {
+                throw new ArgumentException($"{hex} is not a valid hex color value");
+            }
+        
+            // Convert hex to int and extract RGB components
+            float r = ((intColor >> 16) & 255) / 255f;
+            float g = ((intColor >> 8) & 255) / 255f;
+            float b = (intColor & 255) / 255f;
+        
+            return (r, g, b);
+        }
+
+        public static (byte R, byte G, byte B) HexToRGB255(string hex)
+        {
+            // Remove '#' if it exists
+            if (hex.StartsWith("#"))
+            {
+                hex = hex.Substring(1);
+            }
+
+            // Convert hex to int and extract RGB components
+            int intColor = int.Parse(hex, NumberStyles.HexNumber);
+            byte r = (byte)((intColor >> 16) & 255);
+            byte g = (byte)((intColor >> 8) & 255);
+            byte b = (byte)(intColor & 255);
+
+            return (r, g, b);
+        }
+
+        public static (float C, float M, float Y, float K) HexToCMYKFloat(string hex)
+        {
+            var (r, g, b) = HexToRGB255(hex);
+            return Converters.RGB255ToCMYKFloat(r, g, b);
+        }
+
+        public static (float C, float M, float Y, float K) HexToCMYKPercentage(string hex)
+        {
+            var (r, g, b) = HexToRGB255(hex);
+            return Converters.RGB255ToCMYKPercentage(r, g, b);
+        }
+
+        public static (float H, float S, float V) HexToHSVFloat(string hex)
+        {
+            var (r, g, b) = HexToRGB255(hex);
+            return Converters.RGB255ToHSVFloat(r, g, b);
+        }
+
+
+        // RGB CONVERTERS ///////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////
+
+
         public static string RGBFloatToHex(float red, float green, float blue)
         {
             // Clamping the values between 0.0 and 1.0
@@ -234,13 +300,13 @@ namespace VSYSColorOps.ColorConversion
             return (c, m, y, kPercentage);
         }
 
-        public static string RGBByteToHex(byte red, byte green, byte blue)
+        public static string RGB255ToHex(byte red, byte green, byte blue)
         {
             // Returning the formatted hex string
             return $"#{red:X2}{green:X2}{blue:X2}";
         }
 
-        public static (float H, float S, float V) RGBByteToHSVFloat(byte r, byte g, byte b)
+        public static (float H, float S, float V) RGB255ToHSVFloat(byte r, byte g, byte b)
         {
             float rf = r / 255f;
             float gf = g / 255f;
@@ -279,7 +345,7 @@ namespace VSYSColorOps.ColorConversion
             return (h, s, v);
         }
 
-        public static (float C, float M, float Y, float K) RGBByteToCMYKFloat(byte r, byte g, byte b)
+        public static (float C, float M, float Y, float K) RGB255ToCMYKFloat(byte r, byte g, byte b)
         {
             float rf = r / 255f;
             float gf = g / 255f;
@@ -288,7 +354,7 @@ namespace VSYSColorOps.ColorConversion
             return RGBFloatToCMYK(rf, gf, bf);
         }
         
-        public static (float C, float M, float Y, float K) RGBByteToCMYKPercentage(byte r, byte g, byte b)
+        public static (float C, float M, float Y, float K) RGB255ToCMYKPercentage(byte r, byte g, byte b)
         {
             // Normalize the RGB values to the range 0.0 to 1.0
             float rf = r / 255f;
@@ -311,6 +377,5 @@ namespace VSYSColorOps.ColorConversion
 
             return (c, m, y, kPercentage);
         }
-
     }
 }

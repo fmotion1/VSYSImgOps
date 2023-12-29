@@ -22,7 +22,7 @@
     # Leave commented out to import into any host.
     # PowerShellHostName = ''
 
-    RequiredModules =    'PwshSpectreConsole'
+    RequiredModules =    ''
 
     RequiredAssemblies = 'System.Drawing',
                          'System.Windows.Forms', 
