@@ -45,7 +45,9 @@
                          'Convert-RGBToHSV',
                          'Convert-RGBToHex',
                          'Convert-RGBToCMYK',
-                         'Confirm-WellFormedHex'
+                         'Confirm-WellFormedHex',
+                         'Remove-InvalidPlainTextImages',
+                         'Get-EmbeddedSVGsFromFile'
                          
                         
 
