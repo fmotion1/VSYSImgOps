@@ -40,7 +40,7 @@ function Remove-InvalidPlainTextImages {
     )
 
     begin {
-        $List = [System.Collections.Generic.List[String]]@()
+        $List = [System.Collections.Generic.HashSet[string]]::new()
         if($Filter -eq 'All'){
             Write-Host "Filter is set to process ALL image types." -ForegroundColor White
         } else {

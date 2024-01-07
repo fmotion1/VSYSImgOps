@@ -1,6 +1,4 @@
-# DONE 1
-function Get-ImageDimensions {
-
+function Convert-CropSVGInkscapeFolder {
     [cmdletbinding(DefaultParameterSetName = 'Path')]
     param(
         [parameter(
@@ -22,31 +20,39 @@ function Get-ImageDimensions {
         )]
         [ValidateNotNullOrEmpty()]
         [Alias('PSPath')]
-        [string[]]$LiteralPath
+        [string[]]$LiteralPath,
+
+        [Switch] $RenameOutput,
+        [Switch] $PlaceInSubfolder,
+        [Int32] $MaxThreads = 16
 
     )
 
     process {
+        
+        $List = [System.Collections.Generic.List[String]]@()
 
-        # Resolve path(s)
         if ($PSCmdlet.ParameterSetName -eq 'Path') {
             $ResolvedPaths = Resolve-Path -Path $Path | Select-Object -ExpandProperty Path
         } elseif ($PSCmdlet.ParameterSetName -eq 'LiteralPath') {
             $ResolvedPaths = Resolve-Path -LiteralPath $LiteralPath | Select-Object -ExpandProperty Path
         }
 
-        # Process each item in resolved paths
-        foreach ($Item in $ResolvedPaths) {
-
-            $Image = [System.Drawing.Image]::FromFile($Item)
-            $ImgWidth  = $Image.Width
-            $ImgHeight = $Image.Height
-            $Image.Dispose()
-
-            [PSCustomObject]@{
-                Width  = $ImgWidth
-                Height = $ImgHeight
+        foreach ($Path in $ResolvedPaths) {
+            if(Test-Path -LiteralPath $Path -PathType Container){
+                $List.Add($Path)
             }
+        }
+
+        $List | ForEach-Object {
+            $Files = Get-ChildItem -LiteralPath $_ -Filter *.svg -Depth 0 | % {$_.FullName}
+            $convertCropSVGInkscapeSplat = @{
+                Files = $Files
+                RenameOutput = $RenameOutput
+                PlaceInSubfolder = $PlaceInSubfolder
+                MaxThreads = $MaxThreads
+            }
+            Convert-CropSVGInkscape @convertCropSVGInkscapeSplat 
         }
     }
 }

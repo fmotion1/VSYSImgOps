@@ -35,9 +35,13 @@
                          'Confirm-WellFormedHex',
                          'Remove-InvalidPlainTextImages',
                          'Get-EmbeddedSVGsFromFile',
-                         'Get-SvgDimensions',
+                         'Get-SVGDimensions',
                          'Convert-SVGtoICO',
-                         'Get-SvgObject'
+                         'Convert-SVGtoICOFolder',
+                         'Convert-CropSVGInkscape',
+                         'Convert-CropSVGInkscapeFolder',
+                         'Group-SortImagesBySize',
+                         'Group-SortImagesBySizeFolder'
                          
                         
 
