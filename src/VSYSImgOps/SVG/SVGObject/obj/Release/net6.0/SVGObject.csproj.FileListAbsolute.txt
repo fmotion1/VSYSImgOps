@@ -1,0 +1,13 @@
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSImgOps\SVG\SVGObject\bin\Release\net6.0\SVGObject.deps.json
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSImgOps\SVG\SVGObject\bin\Release\net6.0\SVGObject.dll
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSImgOps\SVG\SVGObject\bin\Release\net6.0\SVGObject.pdb
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSImgOps\SVG\SVGObject\obj\Release\net6.0\SVGObject.csproj.AssemblyReference.cache
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSImgOps\SVG\SVGObject\obj\Release\net6.0\SVGObject.GeneratedMSBuildEditorConfig.editorconfig
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSImgOps\SVG\SVGObject\obj\Release\net6.0\SVGObject.AssemblyInfoInputs.cache
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSImgOps\SVG\SVGObject\obj\Release\net6.0\SVGObject.AssemblyInfo.cs
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSImgOps\SVG\SVGObject\obj\Release\net6.0\SVGObject.csproj.CoreCompileInputs.cache
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSImgOps\SVG\SVGObject\obj\Release\net6.0\SVGObject.sourcelink.json
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSImgOps\SVG\SVGObject\obj\Release\net6.0\SVGObject.dll
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSImgOps\SVG\SVGObject\obj\Release\net6.0\refint\SVGObject.dll
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSImgOps\SVG\SVGObject\obj\Release\net6.0\SVGObject.pdb
+D:\Dev\Powershell\VSYSModules\VSYSImgOps\src\VSYSImgOps\SVG\SVGObject\obj\Release\net6.0\ref\SVGObject.dll

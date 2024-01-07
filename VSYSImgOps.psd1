@@ -28,26 +28,16 @@
                          'System.Windows.Forms', 
                          'PresentationCore', 
                          'PresentationFramework', 
-                         'System.Web',
-                         "$PSScriptRoot\Lib\VSYSColorStructs.dll"
+                         'System.Web'
 
-    FunctionsToExport =  'Get-ImageDominantColors',
+    FunctionsToExport =  
                          'Get-ImageDimensions',
-                         'Get-ImageBitDepth',
-                         'Get-ImageAspectRatio',
-                         'Get-ImageFileSize',
-                         'Get-ImageOverview',
-                         'Convert-HexToRGB',
-                         'Convert-HexToRGBFloat',
-                         'Convert-HexToHSL',
-                         'Convert-HexToHSV',
-                         'Convert-RGBToHSL',
-                         'Convert-RGBToHSV',
-                         'Convert-RGBToHex',
-                         'Convert-RGBToCMYK',
                          'Confirm-WellFormedHex',
                          'Remove-InvalidPlainTextImages',
-                         'Get-EmbeddedSVGsFromFile'
+                         'Get-EmbeddedSVGsFromFile',
+                         'Get-SvgDimensions',
+                         'Convert-SVGtoICO',
+                         'Get-SvgObject'
                          
                         
 

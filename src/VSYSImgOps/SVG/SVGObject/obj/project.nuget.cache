@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "phWAnJpSSFw1BTK2syaPoTYe1ahKpJWdDy++RYu09FVQAJyQ4DSUHBiM6jELG1UIfh5mCnWu2t9Fp00mOh0RYQ==",
+  "success": true,
+  "projectFilePath": "D:\\Dev\\Powershell\\VSYSModules\\VSYSImgOps\\src\\VSYSImgOps\\SVG\\SVGObject\\SVGObject.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\futur\\.nuget\\packages\\powershellstandard.library\\5.1.1\\powershellstandard.library.5.1.1.nupkg.sha512"
+  ],
+  "logs": []
+}
